@@ -1,6 +1,6 @@
 import datetime
 
-from src import crawler
+from src.crawl import item_crawler
 from src.util import suggestion
 
 if __name__ == '__main__':
@@ -9,7 +9,7 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
     print("Start Time: {}".format(start))
 
-    table = crawler.crawl()
+    table = item_crawler.crawl()
 
     # suggestion
     suggestion.suggest(table)

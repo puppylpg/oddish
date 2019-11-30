@@ -1,4 +1,4 @@
-from src.config.definitions import MIN_PRICE_THRESHOLD, TOP_N, MAX_GAP_PERCENTAGE
+from src.config.definitions import MIN_PRICE_THRESHOLD, TOP_N, MAX_GAP_PERCENTAGE, MIN_SOLD_THRESHOLD
 from src.util import converter
 
 buff_to_steam_suggestions = {
@@ -26,18 +26,30 @@ def suggest(table):
 
 def sort_by_column(table, suggestion, column, ascending=True):
     print(suggestion)
-    # filter
-    higher_price = table[table['price'] >= MIN_PRICE_THRESHOLD]
-    print("After threshold(price >= {}) filtered: \n{}".format(MIN_PRICE_THRESHOLD, higher_price.describe()))
 
-    higher_price = higher_price[higher_price['gap_percent'] <= MAX_GAP_PERCENTAGE]
-    print("After threshold(gap_percent <= {}) filtered: \n{}".format(MAX_GAP_PERCENTAGE, higher_price.describe()))
+    # filter
+    filtered_table = filter_table(table)
 
     if ascending:
-        top = higher_price.nsmallest(TOP_N, column)
+        top = filtered_table.nsmallest(TOP_N, column)
         # top = higher_price.sort_values(by=column, ascending=ascending).head(TOP_N)
     else:
-        top = higher_price.nlargest(TOP_N, column)
+        top = filtered_table.nlargest(TOP_N, column)
 
     for item in converter.df_to_list(top):
         print(item.detail())
+
+
+def filter_table(table):
+    table = table[table['price'] >= MIN_PRICE_THRESHOLD]
+    print("After threshold(price >= {}) filtered: \n{}".format(MIN_PRICE_THRESHOLD, table.describe()))
+
+    # due to steam average history price is used!
+    # table = table[table['gap_percent'] <= MAX_GAP_PERCENTAGE]
+    # print("After threshold(gap_percent <= {}) filtered: \n{}".format(MAX_GAP_PERCENTAGE, table.describe()))
+
+    table = table[table['history_sold'] >= MIN_SOLD_THRESHOLD]
+    print("After threshold(history_sold >= {}) filtered: \n{}".format(MIN_SOLD_THRESHOLD, table.describe()))
+
+    return table
+

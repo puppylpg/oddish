@@ -32,7 +32,11 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 - `buy_max_price`：buff最高求购价格；
 - `gap`：当前是`steam_predict_price - price`，需要替换为steam求购价格；
 
-## 使用方法
+## example
+- `goods.json`: 某category中的一些（一般是20个）item信息；
+- `price_history`: steam交易记录（`$`）；
+
+## 运行方法
 工程根目录下：`python -m src`
 
 ## 依赖

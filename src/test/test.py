@@ -1,5 +1,7 @@
-from src.data.item import Item
-
 if __name__ == '__main__':
-    item = Item("name", 1, 333, "steam", 3.4, 444)
-    print(item.detail())
+
+    str_list = '[1, 2, 3]'
+    str_list = str_list.lstrip('[')
+    str_list = str_list.rstrip(']')
+    word_list = str_list.split(',')
+    print([float(i) for i in word_list])

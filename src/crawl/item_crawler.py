@@ -1,7 +1,8 @@
 import os
 import re
 
-from src.config.definitions import OUTPUT_FILE_NAME, FORCE_CRAWL
+from src.config.definitions import OUTPUT_FILE_NAME, FORCE_CRAWL, CRAWL_MIN_PRICE_ITEM
+from src.crawl import history_price_crawler
 from src.data.item import Item
 from src.util import requester, persist_util, http_util, converter
 
@@ -9,8 +10,10 @@ from src.util import requester, persist_util, http_util, converter
 def crawl_website():
     prefix = '<div class="h1z1-selType type_csgo" id="j_h1z1-selType">'
     suffix = '</ul> </div> </div> <div class="criteria">'
+    # to match all csgo skin categories
     category_regex = re.compile(r'<li value="(.+?)"', re.DOTALL)
 
+    # entry page
     root_url = 'https://buff.163.com/market/?game=csgo#tab=selling&page_num=1'
 
     print("GET: " + root_url)
@@ -19,15 +22,15 @@ def crawl_website():
     remove_prefix = root_html.split(prefix, 1)[1]
     core_html = remove_prefix.split(suffix, 1)[0]
 
+    # all categories
     categories = category_regex.findall(core_html)
     print("All categories: ")
     print(*categories, sep=", ")
 
     csgo_items = []
 
-    # TODO
-    for category in categories:
     # for category in [categories.pop()]:
+    for category in categories:
         category_url = 'https://buff.163.com/api/market/goods?game=csgo&page_num=1&category=%s' % category
         print("GET({}): {}".format(category, category_url))
         category_json = requester.get_json(category_url)
@@ -36,9 +39,8 @@ def crawl_website():
         total_count = category_json['data']['total_count']
         current_page_item_count = category_json['data']['page_size']
 
-        # TODO
-        for page_num in range(1, total_page + 1):
         # for page_num in range(1, 2):
+        for page_num in range(1, total_page + 1):
             if page_num != 1:
                 url = 'https://buff.163.com/api/market/goods?game=csgo&page_num={}&category={}'\
                     .format(page_num, category)
@@ -63,9 +65,14 @@ def crawl_website():
                 steam_predict_price = item['goods_info']['steam_price_cny']
                 buy_max_price = item['buy_max_price']
 
+                if float(min_price) <= CRAWL_MIN_PRICE_ITEM or float(steam_predict_price) <= CRAWL_MIN_PRICE_ITEM:
+                    continue
+
                 csgo_items.append(
                     Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price))
                 print("Finish parsing {}.".format(name))
+
+    history_price_crawler.crawl_history_price(csgo_items)
 
     # persist data
     table = persist_util.tabulate(csgo_items)

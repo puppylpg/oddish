@@ -6,14 +6,22 @@ COOKIES = r'_ga=GA1.2.162602080.1551374933; _ntes_nnid=8ce0cf6bdce55512e73f49cb8
 TIMESTAMP = str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 
 # 保存文件粒度
-GRANULARITY_HOUR = False
+GRANULARITY_HOUR = True
 
 # 强制爬取
 FORCE_CRAWL = False
 
+# 汇率
+DOLLAR_TO_CNY = 7.0
+
 # filter
+# 爬取历史价格的话，每个都要单独爬一次，爬取量翻了好几十倍，所以扔掉一些……
+# 大致价格分位点：0 - 10000; 20 - 5000; 50 - 4000; 100 - 3400; 200 - 3000; 500 - 2200; 1000 - 1200
+CRAWL_MIN_PRICE_ITEM = 20
 # buff最低价门槛，低于该价格的条目忽略（要不然统计出来很多封装的涂鸦……）
 MIN_PRICE_THRESHOLD = 10
+# 交易记录阈值，冷门物品不在考虑范围
+MIN_SOLD_THRESHOLD = 10
 # 太大都是steam定价虚高，实际卖不掉的……有了steam求购价之后就不需要这个了
 MAX_GAP_PERCENTAGE = 0.8
 # 每一项指标的输出个数
