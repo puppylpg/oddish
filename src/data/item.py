@@ -1,9 +1,10 @@
-from definitions import TIMESTAMP
+from src.config.definitions import TIMESTAMP
 
 
 class Item:
 
-    def __init__(self, name, price, sell_num, steam_url, steam_predict_price, buy_max_price):
+    def __init__(self, buff_id, name, price, sell_num, steam_url, steam_predict_price, buy_max_price):
+        self.id = buff_id
         self.name = name
         self.price = float(price)
         self.sell_num = int(sell_num)
@@ -21,6 +22,8 @@ class Item:
 
     def to_dict(self):
         item_dict = {
+            # id is index, not content column
+            # "id": self.id,
             "name": self.name,
             "price": self.price,
             "sell_num": self.sell_num,
