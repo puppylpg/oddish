@@ -2,8 +2,8 @@ import os
 import re
 
 from src.config.definitions import OUTPUT_FILE_NAME, FORCE_CRAWL
-from src.util import requester, persist_util, http_util, suggestion
 from src.data.item import Item
+from src.util import requester, persist_util, http_util, converter
 
 
 def crawl_website():
@@ -68,48 +68,22 @@ def crawl_website():
                 print("Finish parsing {}.".format(name))
 
     # persist data
-    persist_util.tabulate(csgo_items)
+    table = persist_util.tabulate(csgo_items)
 
-    return csgo_items
+    return table
 
 
 def load_local():
-    csgo_items = []
-
-    table = persist_util.load()
-    for item in table.iterrows():
-        item_id = item[0]
-        item_info = item[1]
-
-        item_name = item_info['name']
-        item_price = item_info['price']
-        item_sell_num = item_info['sell_num']
-        item_steam_url = item_info['steam_url']
-        item_steam_predict_price = item_info['steam_predict_price']
-        item_buy_max_price = item_info['buy_max_price']
-
-        csgo_items.append(
-            Item(
-                item_id,
-                item_name,
-                item_price,
-                item_sell_num,
-                item_steam_url,
-                item_steam_predict_price,
-                item_buy_max_price
-            )
-        )
-
-    return csgo_items
+    return persist_util.load()
 
 
 def crawl():
     print("Force crawling? {}".format(FORCE_CRAWL))
     if (not FORCE_CRAWL) and os.path.exists(OUTPUT_FILE_NAME):
         print('{} exists, load data from local!'.format(OUTPUT_FILE_NAME))
-        csgo_items = load_local()
+        table = load_local()
     else:
         print('Crawl data from website!')
-        csgo_items = crawl_website()
+        table = crawl_website()
 
-    return csgo_items
+    return table

@@ -26,10 +26,18 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 > TIME USED: 0:18:40.363070.
 
 ## 数据结构
+- `name`：饰品中文名；
+- `price`：buff最低价；
+- `steam_predict_price`：预估的steam最低售价；
+- `buy_max_price`：buff最高求购价格；
+- `gap`：当前是`steam_predict_price - price`，需要替换为steam求购价格；
 
 ## 使用方法
 工程根目录下：`python -m src`
 
 ## 依赖
-python 3
-pandas
+- python: 3.7.3
+- pandas: 0.25.3
+
+## 结论
+最终我发现，还是买steam充值卡更实惠 :D

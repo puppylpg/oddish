@@ -5,10 +5,21 @@ COOKIES = r'_ga=GA1.2.162602080.1551374933; _ntes_nnid=8ce0cf6bdce55512e73f49cb8
 
 TIMESTAMP = str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 
+# 保存文件粒度
 GRANULARITY_HOUR = False
 
+# 强制爬取
 FORCE_CRAWL = False
 
+# filter
+# buff最低价门槛，低于该价格的条目忽略（要不然统计出来很多封装的涂鸦……）
+MIN_PRICE_THRESHOLD = 10
+# 太大都是steam定价虚高，实际卖不掉的……有了steam求购价之后就不需要这个了
+MAX_GAP_PERCENTAGE = 0.8
+# 每一项指标的输出个数
+TOP_N = 50
+
+# 文件
 DATE_DAY = str(datetime.now().strftime('%Y-%m-%d'))
 DATE_HOUR = str(datetime.now().strftime('%Y-%m-%d-%H'))
 OUTPUT_PATH = "output"

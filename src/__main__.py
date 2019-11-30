@@ -9,10 +9,10 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
     print("Start Time: {}".format(start))
 
-    csgo_items = crawler.crawl()
+    table = crawler.crawl()
 
     # suggestion
-    suggestion.suggest(csgo_items)
+    suggestion.suggest(table)
 
     # end
     end = datetime.datetime.now()
