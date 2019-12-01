@@ -6,6 +6,9 @@ If there is no data available, crawl from the website, then analyse data from lo
 
 > **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website to often!**
 
+## wiki
+https://puppylpg.github.io/python/csgo/2019/12/01/python-crawler-buff.html
+
 ## 爬取
 ### 数据源
 当首次爬取时，会从网站爬取数据，保存到本地。之后再次爬取时，默认先检测本地文件，如果有，直接从本地加载。
@@ -35,9 +38,15 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 ## example
 - `goods.json`: 某category中的一些（一般是20个）item信息；
 - `price_history`: steam交易记录（`$`）；
+- `steam_inventory`: 库存；
+
+## 配置
+修改`src/config/definitions.py`中的一些参数，进行自己希望的自定义配置。重要配置的含义见文件中的注释，或者wiki介绍。
 
 ## 运行方法
-工程根目录下：`python -m src`
+1. （可选）自定义配置；
+1. cookie: 登录buff网站，获取cookie（TODO: 方法描述），存入`src/config/cookie.txt`（TODO: 好像不是很方便，修改一下位置）；
+1. 工程根目录下运行：`python -m src`
 
 ## 依赖
 - python: 3.7.3

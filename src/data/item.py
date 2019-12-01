@@ -1,6 +1,6 @@
 import statistics
 
-from src.config.definitions import TIMESTAMP
+from src.config.definitions import TIMESTAMP, STEAM_SELL_TAX
 
 
 class Item:
@@ -24,18 +24,30 @@ class Item:
         self.history_sold = 0
         self.history_days = 0
         self.average_sold_price = 0
+        self.average_sold_price_after_tax = 0
 
     def set_history_prices(self, prices, days):
         self.history_prices = prices
         self.history_sold = len(prices)
         self.history_days = days
         self.average_sold_price = self.centered_average(prices)
-        self.gap = self.average_sold_price - self.price
+        self.average_sold_price_after_tax = self.average_sold_price * (1 - STEAM_SELL_TAX)
+        self.gap = self.average_sold_price_after_tax - self.price
         self.gap_percent = self.gap * 1.0 / self.price
 
     def detail(self):
-        return "{}: {}(steam average sold price) - {}(buff) = {}(beyond {:.2%}). Sold {} items in {} days.\n steam url:{}"\
-            .format(self.name, self.average_sold_price, self.price, self.gap, self.gap_percent, self.history_sold, self.history_days, self.steam_url)
+        return "{}: {}(steam average sold price after tax) - {}(buff) = {}(beyond {:.2%}). " \
+               "Sold {} items in {} days.\n steam url:{}" \
+            .format(
+            self.name,
+            self.average_sold_price_after_tax,
+            self.price,
+            self.gap,
+            self.gap_percent,
+            self.history_sold,
+            self.history_days,
+            self.steam_url
+        )
 
     def to_dict(self):
         item_dict = {
@@ -53,12 +65,16 @@ class Item:
             "history_prices": self.history_prices,
             "history_sold": self.history_sold,
             "history_days": self.history_days,
-            "average_sold_price": self.average_sold_price
+            "average_sold_price": self.average_sold_price,
+            "average_sold_price_after_tax": self.average_sold_price_after_tax
         }
         return item_dict
 
     @staticmethod
     def centered_average(numbers):
+        if len(numbers) == 0:
+            return 0
+
         if len(numbers) > 2:
             return (sum(numbers) - max(numbers) - min(numbers)) / (len(numbers) - 2)
         else:
