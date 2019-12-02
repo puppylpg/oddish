@@ -1,3 +1,7 @@
 .idea
 __pycache__
 output
+
+database
+log
+suggestion

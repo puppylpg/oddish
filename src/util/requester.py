@@ -3,6 +3,7 @@ from requests import Timeout
 
 from src.config.definitions import COOKIES
 from src.util import timer
+from src.util.logger import log
 
 cookie_str = COOKIES
 cookies = {}
@@ -19,7 +20,7 @@ headers = {
 def get_json_dict(url):
     timer.sleep_awhile()
     try:
-        return requests.get(url, headers=headers, cookies=cookies).json()
+        return requests.get(url, headers=headers, cookies=cookies, timeout=5).json()
     except Timeout:
-        print("timeout for {}".format(url))
+        log.error("timeout for {}".format(url))
         return None

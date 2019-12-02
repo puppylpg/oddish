@@ -1,11 +1,12 @@
 import os
 import re
 
-from src.config.definitions import OUTPUT_FILE_NAME, FORCE_CRAWL, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM
+from src.config.definitions import DATABASE_FILE, FORCE_CRAWL, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM
 from src.config.urls import BUFF_ROOT, BUFF_GOODS
 from src.crawl import history_price_crawler
 from src.data.item import Item
 from src.util import requester, persist_util, http_util
+from src.util.logger import log
 
 
 def collect_item(item):
@@ -17,12 +18,15 @@ def collect_item(item):
     steam_predict_price = item['goods_info']['steam_price_cny']
     buy_max_price = item['buy_max_price']
 
-    if float(min_price) <= CRAWL_MIN_PRICE_ITEM or float(steam_predict_price) <= CRAWL_MIN_PRICE_ITEM \
-            or float(min_price) >= CRAWL_MAX_PRICE_ITEM or float(steam_predict_price) >= CRAWL_MAX_PRICE_ITEM:
-        print("{} price too low or too high. Drop it!".format(name))
+    # restrict price of a item
+    if float(min_price) < CRAWL_MIN_PRICE_ITEM or float(steam_predict_price) < CRAWL_MIN_PRICE_ITEM:
+        log.info("{} price is lower than {}. Drop it!".format(name, CRAWL_MIN_PRICE_ITEM))
+        return None
+    elif float(min_price) > CRAWL_MAX_PRICE_ITEM or float(steam_predict_price) > CRAWL_MAX_PRICE_ITEM:
+        log.info("{} price is higher than {}. Drop it!".format(name, CRAWL_MAX_PRICE_ITEM))
         return None
     else:
-        print("Finish parsing {}.".format(name))
+        log.info("Finish parsing {}.".format(name))
         return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
 
 
@@ -30,12 +34,12 @@ def collect_single_category(category):
     csgo_category_item = []
 
     category_url = BUFF_GOODS + 'game=csgo&page_num=1&category=%s' % category
-    print("GET({}): {}".format(category, category_url))
+    log.info("GET({}): {}".format(category, category_url))
     category_json = requester.get_json_dict(category_url)
 
     # return if request timeout
     if category_json is None:
-        print('Timeout for category {}. SKIP'.format(category))
+        log.error('Timeout for category {}. SKIP'.format(category))
         return csgo_category_item
 
     total_page = category_json['data']['total_page']
@@ -47,11 +51,11 @@ def collect_single_category(category):
 
         # return if request timeout
         if page_items is None:
-            print('Timeout for page {} of {}. SKIP'.format(page_num, category))
+            log.error('Timeout for page {} of {}. SKIP'.format(page_num, category))
             continue
 
         current_count = page_items['data']['page_size']
-        print(
+        log.info(
             "GET({} page {}/{}, item {}/{}): {}".format(category, page_num, total_page, current_count, total_count, url)
         )
 
@@ -61,7 +65,7 @@ def collect_single_category(category):
             if csgo_item is not None:
                 csgo_category_item.append(csgo_item)
 
-    print("Finish parsing {}.".format(category))
+    log.info("Finish parsing category {}. Total effective items: {}\n".format(category, len(csgo_category_item)))
     return csgo_category_item
 
 
@@ -72,7 +76,7 @@ def collect_all_categories(categories):
     for category in categories:
         csgo_items.extend(collect_single_category(category))
 
-    print("Finish parsing All csgo items.")
+    log.info("Finish parsing All csgo items. Total effective items: {}\n".format(len(csgo_items)))
     return csgo_items
 
 
@@ -85,7 +89,7 @@ def crawl_website():
     # entry page
     root_url = BUFF_ROOT + 'market/?game=csgo#tab=selling&page_num=1'
 
-    print("GET: " + root_url)
+    log.info("GET: " + root_url)
     root_html = http_util.open_url(root_url)
 
     remove_prefix = root_html.split(prefix, 1)[1]
@@ -93,7 +97,7 @@ def crawl_website():
 
     # all categories
     categories = category_regex.findall(core_html)
-    print("All categories: ")
+    log.info("All categories: ")
     # All categories:
     # weapon_knife_survival_bowie, weapon_knife_butterfly, weapon_knife_falchion, weapon_knife_flip, weapon_knife_gut,
     # weapon_knife_tactical, weapon_knife_m9_bayonet, weapon_bayonet, weapon_knife_karambit, weapon_knife_push,
@@ -108,17 +112,18 @@ def crawl_website():
     # weapon_sport_gloves, weapon_hydra_gloves,
     # csgo_type_tool, csgo_type_spray, csgo_type_collectible, csgo_type_ticket, csgo_tool_gifttag, csgo_type_musickit,
     # csgo_type_weaponcase, csgo_tool_weaponcase_keytag, type_customplayer
-    print(*categories, sep=", ")
+    log.info(", ".join(categories))
 
     csgo_items = collect_all_categories(categories)
 
     # crawl price for all items
     history_price_crawler.crawl_history_price(csgo_items)
 
-    # persist data
-    table = persist_util.tabulate(csgo_items)
-
-    return table
+    if len(csgo_items) != 0:
+        # persist data
+        return persist_util.tabulate(csgo_items)
+    else:
+        return None
 
 
 def load_local():
@@ -126,12 +131,12 @@ def load_local():
 
 
 def crawl():
-    print("Force crawling? {}".format(FORCE_CRAWL))
-    if (not FORCE_CRAWL) and os.path.exists(OUTPUT_FILE_NAME):
-        print('{} exists, load data from local!'.format(OUTPUT_FILE_NAME))
+    log.info("Force crawling? {}".format(FORCE_CRAWL))
+    if (not FORCE_CRAWL) and os.path.exists(DATABASE_FILE):
+        log.info('{} exists, load data from local!'.format(DATABASE_FILE))
         table = load_local()
     else:
-        print('Crawl data from website!')
+        log.info('Crawl data from website!')
         table = crawl_website()
 
     return table

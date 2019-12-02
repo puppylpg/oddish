@@ -1,4 +1,4 @@
-import statistics
+import numpy as np
 
 from src.config.definitions import TIMESTAMP, STEAM_SELL_TAX
 
@@ -36,7 +36,7 @@ class Item:
         self.gap_percent = self.gap * 1.0 / self.price
 
     def detail(self):
-        return "{}: {}(steam average sold price after tax) - {}(buff) = {}(beyond {:.2%}). " \
+        return "{}: {}(steam .25 percentile sold price after tax) - {}(buff) = {}(beyond {:.2%}). " \
                "Sold {} items in {} days.\n steam url:{}" \
             .format(
             self.name,
@@ -78,4 +78,4 @@ class Item:
         if len(numbers) > 2:
             return (sum(numbers) - max(numbers) - min(numbers)) / (len(numbers) - 2)
         else:
-            return statistics.mean(numbers)
+            return float(np.percentile(numbers, 25))
