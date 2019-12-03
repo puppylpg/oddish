@@ -21,20 +21,6 @@
     - cookie放入文件；
     - 价格低于`CRAWL_MIN_PRICE_ITEM`或高于`CRAWL_MAX_PRICE_ITEM`就不爬取了，每个item的历史售出价格都要单独爬一次，太耗时了；
 
-* TODO
-    - 增加爬取缓存，如果爬取过程太长中断，可以使用   
-    ```
-    catch exception 生成table持久化文件.unfished和访问过的url持久化文件
-    在每次网络访问后，记录访问过的url，访问前，判断url是否访问过
-    下次启动时，先检查是否有未完成，有的话恢复，并删除unfished和url used
-    
-    测试的时候，可以先使用一个category去试试，中间断网
-  
-    或者专门搞fail item url，fail category url， fail price url，一个个单独分类恢复
-    ```
-    - 计算steam卖到buff的收益率时，使用buff实际售价取代buff最低售价，要不然也没啥意义；
-    - 显示进度，记录每一次价格爬取是总第多少次，好预估结束时间；
-
 ## v1.5.0(2019-12-02)
 * 功能
     - 爬取的数据、log、建议分别放到database、log、suggestion文件夹中，同时console也会输出所有内容；

@@ -19,7 +19,13 @@ https://puppylpg.github.io/python/csgo/2019/12/01/python-crawler-buff.html
 
 ### 认证
 buff提供完用户名密码之后还要使用网易易盾验证登录，挺烦的。所以目前简单起见，
-每次先网页登录，然后手工把cookie贴到程序里，使用该cookie运行。
+每次先使用用户名和密码网页登录buff，然后手工把cookie贴到`config/config.ini`里，使用该cookie运行。
+
+建议使用Chrome登录buff，查看cookie（可自行百度方法），贴到配置里，粘贴后配置示例如下：
+```
+[BASIC]
+cookie = _ga=GA1.2.162602080.1551374933; _ntes_nnid=8ce0cf6bdce55512e73f49cb8a49960e,1552104955025; _ntes_nuid=8ce0cf6bdce55512e73f49cb8a49960e; ...; _gat_gtag_UA_109989484_1=1
+```
 
 ### 代理
 并不能找到国内的质量比较高的合（免）适（费）的代理服务器。所以还是用自己的ip慢慢爬着吧。爬慢点儿，看起来buff也不会下杀手。
@@ -42,11 +48,10 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 - `steam_inventory`: 库存；
 
 ## 配置
-修改`src/config/definitions.py`中的一些参数，进行自己希望的自定义配置。重要配置的含义见文件中的注释，或者wiki介绍。
+修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。
 
 ## 运行方法
-1. （可选）自定义配置；
-1. cookie: 登录buff网站，获取cookie（TODO: 方法描述），存入`src/config/cookie.txt`（TODO: 好像不是很方便，修改一下位置）；
+1. （可选）自定义配置，cookie一定要配置，方法见上述“认证”部分；
 1. 工程根目录下运行：`python -m src`
 
 ## 输出结果

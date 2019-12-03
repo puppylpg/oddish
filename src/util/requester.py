@@ -1,11 +1,11 @@
 import requests
 from requests import Timeout
 
-from src.config.definitions import COOKIES
+from src.config.definitions import COOKIE
 from src.util import timer
 from src.util.logger import log
 
-cookie_str = COOKIES
+cookie_str = COOKIE
 cookies = {}
 for line in cookie_str.split(';'):
     k, v = line.split('=', 1)
