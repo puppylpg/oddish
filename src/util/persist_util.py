@@ -9,19 +9,23 @@ from src.util.logger import log
 
 def tabulate(csgo_items):
 
-    table = converter.list_to_df(csgo_items)
-    table_info(table)
+    if len(csgo_items) != 0:
+        # persist data
+        table = converter.list_to_df(csgo_items)
+        table_info(table)
 
-    # mkdir if not exist
-    if not os.path.exists(DATABASE_PATH):
-        os.makedirs(DATABASE_PATH)
-    # save to file
-    table.to_csv(DATABASE_FILE, encoding='utf-8')
-    # when saving file hourly, save a file daily too
-    if GRANULARITY_HOUR:
-        table.to_csv(DATABASE_FILE_DAY, encoding='utf-8', mode='w')
+        # mkdir if not exist
+        if not os.path.exists(DATABASE_PATH):
+            os.makedirs(DATABASE_PATH)
+        # save to file
+        table.to_csv(DATABASE_FILE, encoding='utf-8')
+        # when saving file hourly, save a file daily too
+        if GRANULARITY_HOUR:
+            table.to_csv(DATABASE_FILE_DAY, encoding='utf-8', mode='w')
 
-    return table
+        return table
+    else:
+        return None
 
 
 def load():

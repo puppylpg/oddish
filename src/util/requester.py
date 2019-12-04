@@ -22,5 +22,5 @@ def get_json_dict(url):
     try:
         return requests.get(url, headers=headers, cookies=cookies, timeout=5).json()
     except Timeout:
-        log.error("timeout for {}".format(url))
+        log.error("timeout for {}. SKIP.".format(url))
         return None

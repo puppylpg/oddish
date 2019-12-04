@@ -1,4 +1,43 @@
+import sys
+
+from src.config.definitions import CRAWL_MAX_PRICE_ITEM, CRAWL_MIN_PRICE_ITEM
+
 BUFF_ROOT = 'https://buff.163.com/'
 BUFF_GOODS = BUFF_ROOT + 'api/market/goods?'
 BUFF_HISTORY_PRICE = BUFF_ROOT + 'api/market/goods/price_history?'
 BUFF_HISTORY_PRICE_CNY = BUFF_ROOT + 'api/market/goods/price_history/buff?'
+
+
+def goods_root_url():
+    return BUFF_ROOT + 'market/?game=csgo#tab=selling&page_num=1'
+
+
+def category_root_url(category):
+    return BUFF_GOODS + 'game=csgo&page_num=1&category=%s' % category
+
+
+def category_page_url(page_num, category):
+    return BUFF_GOODS + 'game=csgo&page_num={}&category={}'.format(page_num, category)
+
+
+def steam_price_history_url(item_id):
+    """7 days history prices"""
+    return BUFF_HISTORY_PRICE + 'game=csgo&goods_id={}&currency=&days=7'.format(item_id)
+
+
+def buff_price_history_url(item_id):
+    return BUFF_HISTORY_PRICE_CNY + 'game=csgo&goods_id={}&currency=CNY&days=7'.format(item_id)
+
+
+def goods_section_root_url():
+    """
+    buff is strange: only request with page number beyond actual upper bound,
+    can you get the true page number with this price section.
+    """
+    return BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.asc&min_price={}&max_price={}' \
+        .format(sys.maxsize, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
+
+
+def goods_section_page_url(page_num):
+    return BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}' \
+        .format(page_num, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)

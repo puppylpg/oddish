@@ -1,16 +1,7 @@
 from src.config.definitions import DOLLAR_TO_CNY
-from src.config.urls import BUFF_HISTORY_PRICE, BUFF_HISTORY_PRICE_CNY
+from src.config.urls import *
 from src.util import requester
 from src.util.logger import log
-
-
-def steam_price_history_url(item_id):
-    """7 days history prices"""
-    return BUFF_HISTORY_PRICE + 'game=csgo&goods_id={}&currency=&days=7'.format(item_id)
-
-
-def buff_price_history_url(item_id):
-    return BUFF_HISTORY_PRICE_CNY + 'game=csgo&goods_id={}&currency=CNY&days=7'.format(item_id)
 
 
 def crawl_item_history_price(index, item, total_price_number):
