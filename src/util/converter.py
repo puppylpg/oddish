@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 
 from src.data.item import Item
@@ -20,9 +21,10 @@ def df_to_list(table):
         item_buy_max_price = item_info['buy_max_price']
 
         # 直接构造的DataFrame，这一列是list(float)，如果是从文件反序列化的，这一列是plain string
+        # 使用`json.loads`讲plain string转换为list
         history_prices = item_info['history_prices']
         item_history_prices = history_prices \
-            if isinstance(history_prices, list) else str_to_float_list(history_prices)
+            if isinstance(history_prices, list) else json.loads(history_prices)
         item_history_days = item_info['history_days']
 
         part_item = Item(
@@ -52,10 +54,3 @@ def list_to_df(csgo_items):
     pd.set_option('display.expand_frame_repr', False)
 
     return table
-
-
-def str_to_float_list(str_list):
-    str_list = str_list.lstrip('[')
-    str_list = str_list.rstrip(']')
-    word_list = str_list.split(',')
-    return [float(i) for i in word_list]

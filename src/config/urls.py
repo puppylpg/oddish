@@ -29,15 +29,24 @@ def buff_price_history_url(item_id):
     return BUFF_HISTORY_PRICE_CNY + 'game=csgo&goods_id={}&currency=CNY&days=7'.format(item_id)
 
 
-def goods_section_root_url():
+def goods_section_root_url(category):
     """
     buff is strange: only request with page number beyond actual upper bound,
     can you get the true page number with this price section.
     """
-    return BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.asc&min_price={}&max_price={}' \
+
+    base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.asc&min_price={}&max_price={}' \
         .format(sys.maxsize, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
+    if category is not None:
+        base += '&category={}'.format(category)
+
+    return base
 
 
-def goods_section_page_url(page_num):
-    return BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}' \
+def goods_section_page_url(category, page_num):
+    base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}' \
         .format(page_num, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
+    if category is not None:
+        base += '&category={}'.format(category)
+
+    return base

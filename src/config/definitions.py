@@ -30,6 +30,7 @@ COOKIE = config['BASIC']['cookie']
 config_behavior = config['BEHAVIOR']
 GRANULARITY_HOUR = config_behavior.getboolean('granularity_hour')
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
+RETRY_TIMES = int(config_behavior['retry_times'])
 
 # common
 config_common = config['COMMON']
@@ -48,9 +49,11 @@ config_filter = config['FILTER']
 CRAWL_MIN_PRICE_ITEM = max(BUFF_GOODS_LIMITED_MIN_PRICE, float(config_filter['crawl_min_price_item']))
 # 最低价 <= 最高价 <= 系统最高限价
 CRAWL_MAX_PRICE_ITEM = min(max(CRAWL_MIN_PRICE_ITEM, float(config_filter['crawl_max_price_item'])), BUFF_GOODS_LIMITED_MAX_PRICE)
+# steam该饰品7天最低销售数
 MIN_SOLD_THRESHOLD = int(config_filter['min_sold_threshold'])
-# https://stackoverflow.com/questions/335695/lists-in-configparser
-# CATEGORY_BLACK_LIST = json.loads(config_filter['category_black_list'])
+# 黑白名单
+CATEGORY_BLACK_LIST = json.loads(config_filter['category_black_list'])
+CATEGORY_WHITE_LIST = json.loads(config_filter['category_white_list'])
 
 # result
 TOP_N = int(config['RESULT']['top_n'])

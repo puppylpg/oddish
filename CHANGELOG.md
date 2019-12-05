@@ -39,3 +39,13 @@
     - 文件名加上价格区间标识，某已爬取价格区间的数据不影响同一时间段对其他价格区间数据的爬取；
 * bugfix
     - 解析配置时使用`RawConfigParser`，[不转义配置中的百分号等特殊符号](https://stackoverflow.com/questions/14340366/configparser-and-string-with)；
+
+# v3.0.0(2019-12-05)
+* 功能
+    - 工程正式命名为[oddish | 走路草](https://www.pokemon.com/us/pokedex/oddish)，第43号神奇宝贝；
+    - 支持设置饰品类别黑名单白名单，详见README；
+    - 将原有的两种（按类别爬取所有饰品、按价格区间爬取物品）爬取网站的入口合二为一，
+    现在统一按照价格区间爬取，如果设置了饰品类别黑白名单，再按照类别爬取；
+    - 请求url时增加简单的超时重试机制；
+    - 使用`json.loads()`转换plain string list；
+    

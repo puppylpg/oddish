@@ -37,3 +37,4 @@ def load():
 def table_info(table):
     log.info(table)
     log.info(table.describe())
+    log.info('\n')

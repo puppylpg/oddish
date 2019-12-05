@@ -1,6 +1,12 @@
 [toc]
 
-# buff csgo skin crawler
+# oddish
+![oddish](static/oddish.png)
+> [During the daytime, Oddish buries itself in soil to absorb nutrients from the ground using its entire body.](https://www.pokemon.com/us/pokedex/oddish)
+
+走路草，白天沉睡，夜晚潜行，我来过，并将信息镌刻在深深的记忆里。
+
+## Aim
 To crawl csgo skin from `buff.163.com`. 
 If there is no data available, crawl from the website, then analyse data from local pandas DataFrame to avoid more crawling behavior.
 
@@ -36,7 +42,7 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 ## 配置
 修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。
 
-## 价格区间设定
+### 价格区间设定
 价格区间设定在2.0.0版本中是一个非常重要的优化。
 
 之前的价格筛选方式为：爬取所有饰品，按照价格区间进行筛选。优化之后，先使用buff对价格进行筛选，然后爬去筛选后的物品。
@@ -49,17 +55,43 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 
 比如区间设定为`5~1`元，则会被系统调整为`5~5`元，即只爬取5元饰品。
 
-### buff的区间筛选API
+#### buff的区间筛选API
 不得不说buff的区间筛选API很是清奇，限定价格之后，返回的`page_num`和`page_size`竟然都是错的。也就是说返回的数据并不能告诉我们在这个价格区间内
-一共有多少页供给多少饰品。然鹅机智的我发现，如果将page number设定为超出实际页数的值，这两个数据就会变成正确值。
+一共有多少页共计多少饰品。然鹅机智的我发现，如果将page number设定为超出实际页数的值，这两个数据就会变成正确值。
 
-比如，98~99.9的饰品供给3页42件，但是返回值告诉我们一共有720页14388件，而这实际是buff现售物品总数，并不是价格筛选后的件数。
-想获取准确值3页42件，只需给page number设定为超出720的值即可，所以我用了`sys.maxsize`，一个巨大无比的值。
+比如，98~99.9的饰品共计3页42件，但是返回值告诉我们一共有720页14388件，而这实际是buff现售物品总数，并不是价格筛选后的件数。
+想获取准确值3页42件，只需给page number设定为超出3的值即可，所以我用了`sys.maxsize`，一个巨大无比的值。
 
 > 我是不是应该给buff报个bug：
 > - hi, buff，我爬你的网站发现你有bug。
 > - buff: 好的，bug奖励两毛，爬虫封ip处理。
 > :D
+
+### 类别设定
+增设类别限定，可以配置自己**只想**爬取的类别（白名单）或者**不想**爬取（黑名单）的类别。
+
+**白名单优先级高于黑名单优先级。**
+
+所以规则如下：
+- 如果黑白名单均未设置，默认爬取所有类别，所有类别参考`config/reference/category.md`；
+- 如果设置了白名单，仅爬取白名单类型饰品；
+- 如果只设置了黑名单，则爬取除了黑名单之外的所有物品；
+
+比如：
+```
+category_white_list = ["weapon_ak47", "weapon_m4a1", "weapon_m4a1_silencer"]
+category_black_list = ["weapon_m4a1"]
+```
+则最终会爬取AK、M4A1、M4A4三种物品。
+
+> NOTE: M4A1游戏代号为"weapon_m4a1_silencer"、M4A4游戏代号为"weapon_m4a1"。
+> 不要问为什么，我猜是V社员工一开始起名的时候没想好，后来由于兼容性等原因不好改了。那咋办嘛，就这么用着呗。
+
+**类别名称一定不能写错了（建议复制粘贴），否则buff直接返回所有类别的物品……什么鬼设定……**
+
+内部实现上：
+- 如果未设定爬取类别，则不分类别直接爬取价格区间内的所有物品；
+- 如果设定了爬取类别，依次爬取有效类别内所有符合价格区间的物品；
 
 ## 运行方法
 1. （可选）自定义配置，cookie一定要配置，方法见上述“认证”部分；
@@ -95,4 +127,6 @@ csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求
 - `steam_inventory`: 库存；
 
 ## 结论
-最终我发现，还是买steam充值卡更实惠 :D 但是说实话黑产这种东西，还是不碰为好，买完Steam红信的也不少，所以还是这种方式更安全。
+最终我发现，还是买steam充值卡更实惠 :D 
+
+但是说实话黑产这种东西，还是不碰为好，买完充值卡遭遇steam红信的也不少，所以还是这种方式更安全。

@@ -1,4 +1,3 @@
-import os
 import re
 
 from src.config.definitions import *
@@ -6,6 +5,7 @@ from src.config.urls import *
 from src.crawl import history_price_crawler
 from src.data.item import Item
 from src.util import requester, persist_util, http_util
+from src.util.category_util import final_categories
 from src.util.logger import log
 
 
@@ -30,56 +30,7 @@ def collect_item(item):
         return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
 
 
-def collect_single_category(category):
-    csgo_category_item = []
-
-    category_url = category_root_url(category)
-    log.info("GET({}): {}".format(category, category_url))
-    category_json = requester.get_json_dict(category_url)
-
-    # return if request timeout
-    if category_json is None:
-        return csgo_category_item
-
-    total_page = category_json['data']['total_page']
-    total_count = category_json['data']['total_count']
-
-    for page_num in range(1, total_page + 1):
-        url = category_page_url(page_num, category)
-        page_items = requester.get_json_dict(url)
-
-        # return if request timeout
-        if page_items is None:
-            log.error('Timeout for page {} of {}. SKIP'.format(page_num, category))
-            continue
-
-        current_count = page_items['data']['page_size']
-        log.info(
-            "GET({} page {}/{}, item {}/{}): {}".format(category, page_num, total_page, current_count, total_count, url)
-        )
-
-        items = page_items['data']['items']
-        for item in items:
-            csgo_item = collect_item(item)
-            if csgo_item is not None:
-                csgo_category_item.append(csgo_item)
-
-    log.info("Finish parsing category {}. Total effective items: {}\n".format(category, len(csgo_category_item)))
-    return csgo_category_item
-
-
-def collect_all_categories(categories):
-    csgo_items = []
-
-    # for category in [categories.pop()]:
-    for category in categories:
-        csgo_items.extend(collect_single_category(category))
-
-    log.info("Finish parsing All csgo items. Total effective items: {}\n".format(len(csgo_items)))
-    return csgo_items
-
-
-def crawl_the_whole_website():
+def csgo_all_categories():
     prefix = '<div class="h1z1-selType type_csgo" id="j_h1z1-selType">'
     suffix = '</ul> </div> </div> <div class="criteria">'
     # to match all csgo skin categories
@@ -96,27 +47,8 @@ def crawl_the_whole_website():
 
     # all categories
     categories = category_regex.findall(core_html)
-    log.info("All categories: ")
-    # All categories:
-    # weapon_knife_survival_bowie, weapon_knife_butterfly, weapon_knife_falchion, weapon_knife_flip, weapon_knife_gut,
-    # weapon_knife_tactical, weapon_knife_m9_bayonet, weapon_bayonet, weapon_knife_karambit, weapon_knife_push,
-    # weapon_knife_stiletto, weapon_knife_ursus, weapon_knife_gypsy_jackknife, weapon_knife_widowmaker,
-    # weapon_knife_css, weapon_knife_cord, weapon_knife_canis, weapon_knife_outdoor, weapon_knife_skeleton,
-    # weapon_hkp2000, weapon_usp_silencer, weapon_glock, weapon_p250, weapon_fiveseven, weapon_cz75a, weapon_tec9,
-    # weapon_revolver, weapon_deagle, weapon_elite, weapon_galilar, weapon_scar20, weapon_awp, weapon_ak47,
-    # weapon_famas, weapon_m4a1, weapon_m4a1_silencer, weapon_sg556, weapon_ssg08, weapon_aug, weapon_g3sg1,
-    # weapon_p90, weapon_mac10, weapon_ump45, weapon_mp7, weapon_bizon, weapon_mp9, weapon_mp5sd, weapon_sawedoff,
-    # weapon_xm1014, weapon_nova, weapon_mag7, weapon_m249, weapon_negev,
-    # weapon_bloodhound_gloves, weapon_driver_gloves, weapon_hand_wraps, weapon_moto_gloves, weapon_specialist_gloves,
-    # weapon_sport_gloves, weapon_hydra_gloves,
-    # csgo_type_tool, csgo_type_spray, csgo_type_collectible, csgo_type_ticket, csgo_tool_gifttag, csgo_type_musickit,
-    # csgo_type_weaponcase, csgo_tool_weaponcase_keytag, type_customplayer
-    log.info(", ".join(categories))
-
-    csgo_items = collect_all_categories(categories)
-    enrich_item_with_price_history(csgo_items)
-    table = persist_util.tabulate(csgo_items)
-    return table
+    log.info("All categories: {}".format(categories))
+    return categories
 
 
 def enrich_item_with_price_history(csgo_items):
@@ -125,13 +57,32 @@ def enrich_item_with_price_history(csgo_items):
     return csgo_items
 
 
-def crawl_only_price_section():
-    root_url = goods_section_root_url()
+def crawl_website():
+    csgo_items = []
+
+    raw_categories = csgo_all_categories()
+
+    categories = final_categories(raw_categories)
+
+    # crawl by categories and price section
+    if len(raw_categories) != len(categories):
+        for category in categories:
+            csgo_items.extend(crawl_goods_by_price_section(category))
+    else:
+        # crawl by price section without category
+        csgo_items.extend(crawl_goods_by_price_section(None))
+
+    enrich_item_with_price_history(csgo_items)
+    return persist_util.tabulate(csgo_items)
+
+
+def crawl_goods_by_price_section(category=None):
+    root_url = goods_section_root_url(category)
     log.info('GET: {}'.format(root_url))
 
     root_json = requester.get_json_dict(root_url)
 
-    csgo_items = []
+    category_items = []
 
     if root_json is not None:
         total_page = root_json['data']['total_page']
@@ -140,7 +91,7 @@ def crawl_only_price_section():
         # get each page
         for page_num in range(1, total_page + 1):
             log.info('Page {} / {}'.format(page_num, total_page))
-            page_url = goods_section_page_url(page_num)
+            page_url = goods_section_page_url(category, page_num)
             page_json = requester.get_json_dict(page_url)
             if page_json is not None:
                 # items on this page
@@ -149,10 +100,9 @@ def crawl_only_price_section():
                     # get item
                     csgo_item = collect_item(item)
                     if csgo_item is not None:
-                        csgo_items.append(csgo_item)
+                        category_items.append(csgo_item)
 
-    enrich_item_with_price_history(csgo_items)
-    return persist_util.tabulate(csgo_items)
+    return category_items
 
 
 def load_local():
@@ -165,12 +115,7 @@ def crawl():
         log.info('{} exists, load data from local!'.format(DATABASE_FILE))
         table = load_local()
     else:
-        log.info('Crawl data from website!')
-        if CRAWL_MIN_PRICE_ITEM == BUFF_GOODS_LIMITED_MIN_PRICE and CRAWL_MAX_PRICE_ITEM == BUFF_GOODS_LIMITED_MAX_PRICE:
-            log.info('Price section unspecified, crawl all items!')
-            table = crawl_the_whole_website()
-        else:
-            log.info('Price section specified, crawl price between {} and {}'.format(CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM))
-            table = crawl_only_price_section()
+        log.info('Price section specified, crawl price between {} and {}'.format(CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM))
+        table = crawl_website()
 
     return table
