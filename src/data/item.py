@@ -72,10 +72,4 @@ class Item:
 
     @staticmethod
     def centered_average(numbers):
-        if len(numbers) == 0:
-            return 0
-
-        if len(numbers) > 2:
-            return (sum(numbers) - max(numbers) - min(numbers)) / (len(numbers) - 2)
-        else:
-            return float(np.percentile(numbers, 25))
+        return np.percentile(numbers, 25) if len(numbers) != 0 else 0
