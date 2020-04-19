@@ -47,7 +47,7 @@ def csgo_all_categories():
 
     # all categories
     categories = category_regex.findall(core_html)
-    log.info("All categories: {}".format(categories))
+    log.info("All categories({}): {}".format(len(categories), categories))
     return categories
 
 
@@ -85,6 +85,15 @@ def crawl_goods_by_price_section(category=None):
     category_items = []
 
     if root_json is not None:
+        if 'data' not in root_json:
+            log.info('Error happens!')
+            log.info('网站返回信息：')
+            log.info(root_json)
+            if 'error' in root_json:
+                log.info('错误为: ' + root_json['error'])
+            log.info('如果是登录问题，请先在浏览器登录buff，再粘贴正确的cookie到程序中。当前粘贴的cookie为：' + COOKIE)
+            sys.exit(1)
+
         total_page = root_json['data']['total_page']
         total_count = root_json['data']['total_count']
         log.info('Totally {} items of {} pages to crawl.'.format(total_count, total_page))
