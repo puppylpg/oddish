@@ -1,5 +1,10 @@
 [toc]
 
+[![oddish](https://img.shields.io/badge/pokemon-oddish-green)](https://www.pokemon.com/us/pokedex/oddish)
+[![junior](https://img.shields.io/badge/wiki-junior-green)](https://puppylpg.github.io/python/csgo/2019/12/02/python-crawler-buff.html)
+[![optimized](https://img.shields.io/badge/wiki-optimized-green)](https://puppylpg.github.io/python/csgo/2019/12/07/python-crawler-buff-optimaze.html)
+[![puppylpg](https://img.shields.io/badge/author-puppylpg-green)](https://puppylpg.github.io/)
+
 # oddish
 ![oddish](static/oddish.png)
 > [During the daytime, Oddish buries itself in soil to absorb nutrients from the ground using its entire body.](https://www.pokemon.com/us/pokedex/oddish)
@@ -13,7 +18,8 @@ If there is no data available, crawl from the website, then analyse data from lo
 > **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website to often!**
 
 ## wiki
-https://puppylpg.github.io/python/csgo/2019/12/01/python-crawler-buff.html
+- https://puppylpg.github.io/python/csgo/2019/12/01/python-crawler-buff.html;
+- https://puppylpg.github.io/python/csgo/2019/12/07/python-crawler-buff-optimaze.html;
 
 ## 爬取
 ### 数据源
@@ -141,3 +147,8 @@ category_black_list = ["weapon_m4a1"]
 - 加上原来就有的40+余额，买了DARK SOULS III Deluxe Edition和Sekiro: Shadows Die Twice；
 - 玩了一下，卒，卒，卒……卒无限循环，退款……
 
+# Last but not least
+- 喜欢：欢迎star；
+- 有问题：欢迎提出[issue](https://github.com/puppylpg/oddish/issues)；
+- 程序爱好者：欢迎fork，或者提出merge request；
+- 土豪：欢迎点一下工程上的sponsor，赞助一波；
