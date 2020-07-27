@@ -22,6 +22,13 @@ If there is no data available, crawl from the website, then analyse data from lo
 - https://puppylpg.github.io/python/csgo/2019/12/07/python-crawler-buff-optimaze.html;
 
 ## 爬取
+
+### ALERT
+**警告：由于现在buff有反爬机制，爬的过频繁会账号冷却一段时间。目前程序配置的是5-7s爬取一次。可自行在配置文件`config.ini`里配置间隔时间，但为了您的账号安全，程序无论如何都不会以小于5s的间隔爬数据。**
+
+如果还不放心，建议时间间隔再调大一些。当然，调的越大，爬得越慢。所以建议同时使用配置里的黑白名单缩小饰品爬取范围，
+减少没必要的爬取。
+
 ### 数据源
 当首次爬取时，会从网站爬取数据，保存到本地。之后再次爬取时，默认先检测本地文件，如果有，直接从本地加载。
 

@@ -28,6 +28,8 @@ COOKIE = config['BASIC']['cookie']
 
 # behavior
 config_behavior = config['BEHAVIOR']
+FREQUENCY_INTERVAL_LOW = int(config_behavior['frequency_interval_low'])
+FREQUENCY_INTERVAL_HIGH = int(config_behavior['frequency_interval_high'])
 GRANULARITY_HOUR = config_behavior.getboolean('granularity_hour')
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
 RETRY_TIMES = int(config_behavior['retry_times'])
