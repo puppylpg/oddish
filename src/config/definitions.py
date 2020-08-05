@@ -23,8 +23,12 @@ except IOError:
 # current_dir = os.path.dirname(os.path.realpath(__file__))
 # COOKIES = open(os.path.join(current_dir, 'cookie.txt'), 'r').readline().strip()
 
-# cookie
-COOKIE = config['BASIC']['cookie']
+# cookie and api
+BUFF_COOKIE = config['BASIC']['buff_cookie']
+STEAM_COOKIE = config['BASIC']['steam_cookie']
+
+# proxy
+PROXY = config['BASIC']['proxy']
 
 # behavior
 config_behavior = config['BEHAVIOR']

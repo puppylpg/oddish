@@ -3,6 +3,7 @@ import sys
 from src.config.definitions import CRAWL_MAX_PRICE_ITEM, CRAWL_MIN_PRICE_ITEM
 
 BUFF_ROOT = 'https://buff.163.com/'
+STEAM_ROOT = 'https://steamcommunity.com/'
 BUFF_GOODS = BUFF_ROOT + 'api/market/goods?'
 BUFF_HISTORY_PRICE = BUFF_ROOT + 'api/market/goods/price_history?'
 BUFF_HISTORY_PRICE_CNY = BUFF_ROOT + 'api/market/goods/price_history/buff?'
@@ -20,9 +21,10 @@ def category_page_url(page_num, category):
     return BUFF_GOODS + 'game=csgo&page_num={}&category={}'.format(page_num, category)
 
 
-def steam_price_history_url(item_id):
+def steam_price_history_url(item):
     """7 days history prices"""
-    return BUFF_HISTORY_PRICE + 'game=csgo&goods_id={}&currency=&days=7'.format(item_id)
+    name = item.steam_url.rsplit('/', 1)[-1]
+    return STEAM_ROOT + 'market/pricehistory/?country=CN&currency=1&appid=730&market_hash_name={}'.format(name)
 
 
 def buff_price_history_url(item_id):
