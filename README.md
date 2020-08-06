@@ -24,7 +24,7 @@ If there is no data available, crawl from the website, then analyse data from lo
 ## 爬取
 
 ### ALERT
-**警告：由于现在buff有反爬机制，爬的过频繁会账号冷却一段时间。目前程序配置的是5-7s爬取一次。可自行在配置文件`config.ini`里配置间隔时间，但为了您的账号安全，程序无论如何都不会以小于5s的间隔爬数据。**
+**警告：由于现在buff有反爬机制，爬的过频繁会账号冷却。目前程序配置的是2-4s爬取一次。可自行在配置文件`config.ini`里配置间隔时间，但为了您的账号安全，程序无论如何都不会以小于2s的间隔爬数据。**
 
 如果还不放心，建议时间间隔再调大一些。当然，调的越大，爬得越慢。所以建议同时使用配置里的黑白名单缩小饰品爬取范围，
 减少没必要的爬取。
@@ -40,17 +40,20 @@ If there is no data available, crawl from the website, then analyse data from lo
 buff提供完用户名密码之后还要使用网易易盾验证登录，挺烦的。所以目前简单起见，
 每次先使用用户名和密码网页登录buff，然后手工把cookie贴到`config/config.ini`里，使用该cookie运行。
 
+同时也需通过这个方法提供steam的cookie以爬取steam历史价格。
+
 建议使用Chrome登录buff，查看cookie（可自行百度方法），贴到配置里，粘贴后配置示例如下：
 ```
 [BASIC]
-cookie = _ga=GA1.2.162602080.1551374933; _ntes_nnid=8ce0cf6bdce55512e73f49cb8a49960e,1552104955025; _ntes_nuid=8ce0cf6bdce55512e73f49cb8a49960e; ...; _gat_gtag_UA_109989484_1=1
+buff_cookie =  _ntes_nnid=b14d347a6d72cfffffffffa5cdbb99a7,1571493626117; _ntes_nuid=b14d347a6d72c258095b57a5cdbb99a7; ...
+steam_cookie =timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B56941EC90A07EEEEEE0A907688C5D6042; ...
 ```
 
 ### 代理
-并不能找到国内的质量比较高的合（免）适（费）的代理服务器。所以还是用自己的ip慢慢爬着吧。爬慢点儿，看起来buff也不会下杀手。
+并不能找到国内的质量比较高的合（免）适（费）的代理服务器。所以还是用自己的ip慢慢爬着吧。csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求应该就可以了。但是每个饰品都要单独爬一次历史交易价格记录，
+所以请求量倍增，建议使用价格过滤排除某价格区间的物品。~~爬慢点儿，看起来buff也不会下杀手。~~
 
-csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求应该就可以了。但是每个饰品都要单独爬一次历史交易价格记录，
-所以请求量倍增，建议使用价格过滤排除某价格区间的物品。详见wiki。
+同时需要在`config/config.ini`中提供一个`socks`代理，以科学爬取社区市场数据。
 
 ## 配置
 修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。
@@ -114,11 +117,18 @@ category_black_list = ["weapon_m4a1"]
 如果不关心过程，只查看分析结果即可。
 
 ## 依赖
-- python: 3.7.3
-- pandas: 0.25.3
-- numpy: 1.17.4
+- python: 3.8.5
+- pandas: 1.1.0
+- numpy: 1.19.1
+- requests: 2.24.0
 
-没使用依赖的特别特殊的功能，所以除了python必须python3，其他依赖不是这个版本应该也没啥问题。
+注意python为python3，requests为socks版本，其他依赖无特殊要求。
+
+### socks版本requests的安装方法
+```
+pip install requests[socks]
+pip install requests[security]
+```
 
 ## 数据结构
 - `name`：饰品中文名；
