@@ -4,7 +4,8 @@ from src.config.definitions import *
 from src.config.urls import *
 from src.crawl import history_price_crawler
 from src.data.item import Item
-from src.util import requester, persist_util, http_util
+from src.util import persist_util, http_util
+from src.util.requester import *
 from src.util.category_util import final_categories
 from src.util.logger import log
 
@@ -80,7 +81,7 @@ def crawl_goods_by_price_section(category=None):
     root_url = goods_section_root_url(category)
     log.info('GET: {}'.format(root_url))
 
-    root_json = requester.get_json_dict(root_url)
+    root_json = get_json_dict(root_url, buff_cookies)
 
     category_items = []
 
@@ -101,7 +102,7 @@ def crawl_goods_by_price_section(category=None):
         for page_num in range(1, total_page + 1):
             log.info('Page {} / {}'.format(page_num, total_page))
             page_url = goods_section_page_url(category, page_num)
-            page_json = requester.get_json_dict(page_url)
+            page_json = get_json_dict(page_url, buff_cookies)
             if page_json is not None:
                 # items on this page
                 items_json = page_json['data']['items']

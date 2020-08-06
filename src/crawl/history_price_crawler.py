@@ -1,6 +1,6 @@
 from src.config.definitions import DOLLAR_TO_CNY
 from src.config.urls import *
-from src.util import requester
+from src.util.requester import *
 from src.util.logger import log
 
 
@@ -8,16 +8,18 @@ def crawl_item_history_price(index, item, total_price_number):
     history_prices = []
 
     item_id = item.id
-    steam_price_url = steam_price_history_url(item_id)
+    steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
-    steam_history_prices = requester.get_json_dict(steam_price_url)
+    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True)
 
     if steam_history_prices is not None:
-        days = steam_history_prices['data']['days']
-        raw_price_history = steam_history_prices['data']['price_history']
-        for pair in raw_price_history:
-            if len(pair) == 2:
-                history_prices.append(float(pair[1]) * DOLLAR_TO_CNY)
+        raw_price_history = steam_history_prices['prices']
+        days = min(len(raw_price_history), 7)
+        for pair in reversed(raw_price_history):
+            if len(pair) == 3:
+                history_prices.append(float(pair[1]))
+            if len(history_prices) == days:
+                break
 
         # set history price if exist
         if len(history_prices) != 0:
