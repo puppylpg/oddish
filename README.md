@@ -46,14 +46,14 @@ buff提供完用户名密码之后还要使用网易易盾验证登录，挺烦�
 ```
 [BASIC]
 buff_cookie =  _ntes_nnid=b14d347a6d72cfffffffffa5cdbb99a7,1571493626117; _ntes_nuid=b14d347a6d72c258095b57a5cdbb99a7; ...
-steam_cookie =timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B56941EC90A07EEEEEE0A907688C5D6042; ...
+steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B56941EC90A07EEEEEE0A907688C5D6042; ...
 ```
 
 ### 代理
 并不能找到国内的质量比较高的合（免）适（费）的代理服务器。所以还是用自己的ip慢慢爬着吧。csgo总共10000多饰品，每爬一次大概20个，总共下来500多次请求应该就可以了。但是每个饰品都要单独爬一次历史交易价格记录，
 所以请求量倍增，建议使用价格过滤排除某价格区间的物品。~~爬慢点儿，看起来buff也不会下杀手。~~
 
-同时需要在`config/config.ini`中提供一个`socks`代理，以科学爬取社区市场数据。
+同时需要在`config/config.ini`中提供一个`socks`代理（即ss或v2ray的本地端口），以科学爬取社区市场数据。
 
 ## 配置
 修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。

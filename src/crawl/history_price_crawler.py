@@ -19,7 +19,7 @@ def crawl_item_history_price(index, item, total_price_number):
             if len(pair) == 3:
                 history_prices.append(float(pair[1]))
             if len(history_prices) == days:
-                break;
+                break
 
         # set history price if exist
         if len(history_prices) != 0:
