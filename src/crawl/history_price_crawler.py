@@ -1,4 +1,3 @@
-from src.config.definitions import DOLLAR_TO_CNY
 from src.config.urls import *
 from src.util.requester import *
 from src.util.logger import log

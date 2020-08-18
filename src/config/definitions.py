@@ -40,7 +40,6 @@ RETRY_TIMES = int(config_behavior['retry_times'])
 
 # common
 config_common = config['COMMON']
-DOLLAR_TO_CNY = float(config_common['dollar_to_cny'])
 STEAM_SELL_TAX = float(config_common['steam_sell_tax'])
 TIMESTAMP = str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 BUFF_GOODS_LIMITED_MIN_PRICE = 0.0
