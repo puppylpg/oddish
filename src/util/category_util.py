@@ -10,8 +10,10 @@ def final_categories(categories):
     log.info('Blacklist categories({}): {}'.format(len(CATEGORY_BLACK_LIST), CATEGORY_BLACK_LIST))
     log.info('Whitelist categories({}): {}'.format(len(CATEGORY_WHITE_LIST), CATEGORY_WHITE_LIST))
 
-    patterns = CATEGORY_WHITE_LIST if len(CATEGORY_WHITE_LIST) != 0 else CATEGORY_BLACK_LIST
-    final = [item for item in categories if not any(fnmatch(item, pattern) for pattern in patterns)]
+    if len(CATEGORY_WHITE_LIST) != 0:
+        final = [item for item in categories if any(fnmatch(item, pattern) for pattern in CATEGORY_WHITE_LIST)]
+    else:
+        final = [item for item in categories if not any(fnmatch(item, pattern) for pattern in CATEGORY_BLACK_LIST)]
 
     log.info('Final categories({}): {}'.format(len(final), final))
     return final
