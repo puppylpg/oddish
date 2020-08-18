@@ -1,4 +1,5 @@
-from src.config.definitions import DOLLAR_TO_CNY
+from datetime import datetime
+
 from src.config.urls import *
 from src.util.requester import *
 from src.util.logger import log
@@ -14,11 +15,15 @@ def crawl_item_history_price(index, item, total_price_number):
 
     if steam_history_prices is not None:
         raw_price_history = steam_history_prices['prices']
-        days = min(len(raw_price_history), 7)
+        if len(raw_price_history) > 0:
+            days = min((datetime.today().date() - datetime.strptime(raw_price_history[0][0], '%b %d %Y %H: +0').date()).days, 7)
+        else:
+            days = 0
         for pair in reversed(raw_price_history):
             if len(pair) == 3:
-                history_prices.append(float(pair[1]))
-            if len(history_prices) == days:
+                for i in range(0, int(pair[2])):
+                    history_prices.append(float(pair[1]))
+            if (datetime.today().date() - datetime.strptime(pair[0], '%b %d %Y %H: +0').date()).days > days:
                 break
 
         # set history price if exist

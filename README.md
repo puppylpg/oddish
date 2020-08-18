@@ -88,6 +88,8 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 
 **白名单优先级高于黑名单优先级。**
 
+**黑白名单均支持通配符匹配，如 weapon_knife\* 等，更多用法请搜索 "Shell 通配符"**
+
 所以规则如下：
 - 如果黑白名单均未设置，默认爬取所有类别，所有类别参考`config/reference/category.md`；
 - 如果设置了白名单，仅爬取白名单类型饰品；
