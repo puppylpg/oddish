@@ -38,4 +38,4 @@ def get_json_dict(url, cookies, proxy=False, times=1):
             return requests.get(url, headers=headers, cookies=cookies, timeout=5).json()
     except Timeout:
         log.warn("timeout for {}. Try again.".format(url))
-        return get_json_dict(url, times + 1)
+        return get_json_dict(url, cookies, proxy, times + 1)
