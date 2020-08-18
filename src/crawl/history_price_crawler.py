@@ -21,7 +21,8 @@ def crawl_item_history_price(index, item, total_price_number):
             days = 0
         for pair in reversed(raw_price_history):
             if len(pair) == 3:
-                history_prices.append(float(pair[1]))
+                for i in range(0, int(pair[2])):
+                    history_prices.append(float(pair[1]))
             if (datetime.today().date() - datetime.strptime(pair[0], '%b %d %Y %H: +0').date()).days > days:
                 break
 
