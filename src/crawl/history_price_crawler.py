@@ -3,6 +3,7 @@ from datetime import datetime
 from src.config.urls import *
 from src.util.requester import *
 from src.util.logger import log
+import traceback
 
 
 def crawl_item_history_price(index, item, total_price_number):
@@ -38,4 +39,7 @@ def crawl_history_price(csgo_items):
     log.info('Total {} items to get history price.'.format(total_price_number))
 
     for index, item in enumerate(csgo_items, start=1):
-        crawl_item_history_price(index, item, total_price_number)
+        try:
+            crawl_item_history_price(index, item, total_price_number)
+        except Exception as e:
+            log.error(traceback.format_exc())

@@ -1,5 +1,6 @@
 import requests
 from requests import Timeout
+import traceback
 
 from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
 from src.util import timer
@@ -25,6 +26,7 @@ proxies = {
     "http":PROXY,"https":PROXY
 }
 
+
 def get_json_dict(url, cookies, proxy=False, times=1):
     if times > RETRY_TIMES:
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
@@ -38,4 +40,7 @@ def get_json_dict(url, cookies, proxy=False, times=1):
             return requests.get(url, headers=headers, cookies=cookies, timeout=5).json()
     except Timeout:
         log.warn("timeout for {}. Try again.".format(url))
-        return get_json_dict(url, cookies, proxy, times + 1)
+    except Exception as e:
+        log.error("unknown error for {}. Try again. Error string: {}".format(url, e))
+        log.error(traceback.format_exc())
+    return get_json_dict(url, cookies, proxy, times + 1)
