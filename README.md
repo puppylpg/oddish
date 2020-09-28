@@ -18,7 +18,7 @@ If there is no data available, crawl from the website, then analyse data from lo
 > **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website to often!**
 
 ## wiki
-- https://puppylpg.github.io/2019/12/01/python-crawler-buff/
+- https://puppylpg.github.io/2019/12/02/python-crawler-buff/
 - https://puppylpg.github.io/2019/12/07/python-crawler-buff-optimaze/
 
 ## 爬取
