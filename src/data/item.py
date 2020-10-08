@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.config.definitions import TIMESTAMP, STEAM_SELL_TAX
+from src.config.definitions import TIMESTAMP, STEAM_SELL_TAX, EXCHANGE_RATE
 
 
 class Item:
@@ -31,7 +31,7 @@ class Item:
         self.history_sold = len(prices)
         self.history_days = days
         self.average_sold_price = self.centered_average(prices)
-        self.average_sold_price_after_tax = self.average_sold_price * (1 - STEAM_SELL_TAX)
+        self.average_sold_price_after_tax = (self.average_sold_price * (1 - STEAM_SELL_TAX)) * EXCHANGE_RATE
         self.gap = self.average_sold_price_after_tax - self.price
         self.gap_percent = self.gap * 1.0 / self.price
 
