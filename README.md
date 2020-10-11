@@ -1,8 +1,8 @@
 [toc]
 
 [![oddish](https://img.shields.io/badge/pokemon-oddish-green)](https://www.pokemon.com/us/pokedex/oddish)
-[![junior](https://img.shields.io/badge/wiki-junior-green)](https://puppylpg.github.io/python/csgo/2019/12/02/python-crawler-buff.html)
-[![optimized](https://img.shields.io/badge/wiki-optimized-green)](https://puppylpg.github.io/python/csgo/2019/12/07/python-crawler-buff-optimaze.html)
+[![junior](https://img.shields.io/badge/wiki-junior-green)](https://puppylpg.github.io/2019/12/02/python-crawler-buff/)
+[![optimized](https://img.shields.io/badge/wiki-optimized-green)](https://puppylpg.github.io/2019/12/07/python-crawler-buff-optimaze/)
 [![puppylpg](https://img.shields.io/badge/author-puppylpg-green)](https://puppylpg.github.io/)
 
 # oddish
@@ -15,7 +15,10 @@
 To crawl csgo skin from `buff.163.com`. 
 If there is no data available, crawl from the website, then analyse data from local pandas DataFrame to avoid more crawling behavior.
 
-> **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website to often!**
+> **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website with a high frequency!**
+
+## 视频教程
+[oddish纯小白使用教程](https://www.bilibili.com/video/BV1ET4y1w7e1/)
 
 ## wiki
 - https://puppylpg.github.io/2019/12/02/python-crawler-buff/
