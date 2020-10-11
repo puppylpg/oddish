@@ -34,7 +34,7 @@ PROXY = config['BASIC']['proxy']
 config_behavior = config['BEHAVIOR']
 FREQUENCY_INTERVAL_LOW = int(config_behavior['frequency_interval_low'])
 FREQUENCY_INTERVAL_HIGH = int(config_behavior['frequency_interval_high'])
-GRANULARITY_HOUR = config_behavior.getboolean('granularity_hour')
+GRANULARITY_HOUR = int(config_behavior['granularity_hour'])
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
 RETRY_TIMES = int(config_behavior['retry_times'])
 
@@ -69,11 +69,6 @@ DATE_HOUR = str(datetime.now().strftime('%Y-%m-%d-%H'))
 DATE_TIME = DATE_HOUR if GRANULARITY_HOUR else DATE_DAY
 PRICE_SECTION = '_{}_{}'.format(CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
 
-# data file
-DATABASE_PATH = "database"
-DATABASE_FILE = os.path.join(DATABASE_PATH, "csgo_skins_" + DATE_TIME + PRICE_SECTION + ".csv")
-DATABASE_FILE_DAY = os.path.join(DATABASE_PATH, "csgo_skins_" + DATE_DAY + PRICE_SECTION + ".csv")
-
 # log file
 LOG_PATH = "log"
 NORMAL_LOGGER = os.path.join(LOG_PATH, 'log_' + DATE_TIME + PRICE_SECTION + '.log')
@@ -81,3 +76,6 @@ NORMAL_LOGGER = os.path.join(LOG_PATH, 'log_' + DATE_TIME + PRICE_SECTION + '.lo
 # suggestion file
 SUGGESTION_PATH = "suggestion"
 SUGGESTION_LOGGER = os.path.join(SUGGESTION_PATH, 'suggestion_' + DATE_TIME + PRICE_SECTION + '.txt')
+
+# cache file
+CACHE_DIR = 'cache'
