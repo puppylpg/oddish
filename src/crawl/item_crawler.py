@@ -4,7 +4,7 @@ from src.config.definitions import *
 from src.config.urls import *
 from src.crawl import history_price_crawler
 from src.data.item import Item
-from src.util import http_util
+from src.util import persist_util, http_util
 from src.util.requester import *
 from src.util.category_util import final_categories
 from src.util.logger import log

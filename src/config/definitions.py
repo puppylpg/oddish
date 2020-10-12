@@ -34,7 +34,7 @@ PROXY = config['BASIC']['proxy']
 config_behavior = config['BEHAVIOR']
 FREQUENCY_INTERVAL_LOW = int(config_behavior['frequency_interval_low'])
 FREQUENCY_INTERVAL_HIGH = int(config_behavior['frequency_interval_high'])
-GRANULARITY_HOUR = int(config_behavior['granularity_hour'])
+URL_CACHE_HOUR = int(config_behavior['url_cache_hour'])
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
 RETRY_TIMES = int(config_behavior['retry_times'])
 
@@ -66,7 +66,7 @@ TOP_N = int(config['RESULT']['top_n'])
 # 文件
 DATE_DAY = str(datetime.now().strftime('%Y-%m-%d'))
 DATE_HOUR = str(datetime.now().strftime('%Y-%m-%d-%H'))
-DATE_TIME = DATE_HOUR if GRANULARITY_HOUR else DATE_DAY
+DATE_TIME = DATE_HOUR
 PRICE_SECTION = '_{}_{}'.format(CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
 
 # log file
