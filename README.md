@@ -58,6 +58,8 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 
 同时需要在`config/config.ini`中提供一个`socks`代理（即ss或v2ray的本地端口），以科学爬取社区市场数据。
 
+如果不需要代理直连，只需将配置文件中的 `proxy` 留空。
+
 ## 配置
 修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。
 

@@ -115,17 +115,7 @@ def crawl_goods_by_price_section(category=None):
     return category_items
 
 
-def load_local():
-    return persist_util.load()
-
-
 def crawl():
     log.info("Force crawling? {}".format(FORCE_CRAWL))
-    if (not FORCE_CRAWL) and os.path.exists(DATABASE_FILE):
-        log.info('{} exists, load data from local!'.format(DATABASE_FILE))
-        table = load_local()
-    else:
-        log.info('Price section specified, crawl price between {} and {}'.format(CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM))
-        table = crawl_website()
 
-    return table
+    return crawl_website()
