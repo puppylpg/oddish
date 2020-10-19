@@ -1,9 +1,9 @@
 ---
-name: 问题
-about: 提出疑问，我们帮你解答
-title: 
-labels: 
-assignees: 
+name: bug上报
+about: bug上报，帮助我们改进
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
