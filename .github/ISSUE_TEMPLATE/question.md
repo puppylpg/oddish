@@ -1,10 +1,6 @@
 ---
-name: 问题
+name: 提出问题
 about: 提出疑问，我们帮你解答
-title: 
-labels: 
-assignees: 
-
 ---
 
 # 问题描述

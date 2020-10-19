@@ -1,10 +1,6 @@
 ---
-name: bug
+name: bug上报
 about: bug上报，帮助我们改进
-title: ''
-labels: ''
-assignees: ''
-
 ---
 
 # 问题描述
