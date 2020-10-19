@@ -92,3 +92,8 @@
 # v3.8.0(2020-10-16)
 * 功能
     - 添加开源标准：开源许可、CONTRIBUTING、templates等；
+
+# v3.8.1(2020-10-19)
+* 功能
+    - 多issue template支持；
+
