@@ -24,11 +24,11 @@ def exist(url):
 def fetch(url):
     urlid = url_id(url)
     log.info('Successful attempt to fetch from {}'.format(urlid))
-    with open(os.path.join(cache_root, urlid), "r") as f:
+    with open(os.path.join(cache_root, urlid), "r", encoding='utf-8') as f:
         return f.read()
 
 def store(url, data):
     urlid = url_id(url)
-    f = open(os.path.join(cache_root,urlid), "w")
+    f = open(os.path.join(cache_root,urlid), "w", encoding='utf-8')
     f.write(data)
     f.close()
