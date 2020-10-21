@@ -1,15 +1,14 @@
+import traceback
 from datetime import datetime
 
-from src.config.urls import *
-from src.util.requester import *
+from src.config.urls import steam_price_history_url
+from src.util.requester import get_json_dict, steam_cookies
 from src.util.logger import log
-import traceback
 
 
 def crawl_item_history_price(index, item, total_price_number):
     history_prices = []
 
-    item_id = item.id
     steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
     steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True)

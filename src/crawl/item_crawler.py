@@ -1,11 +1,11 @@
 import re
 
-from src.config.definitions import *
-from src.config.urls import *
+from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL
+from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
 from src.crawl import history_price_crawler
 from src.data.item import Item
 from src.util import persist_util, http_util
-from src.util.requester import *
+from src.util.requester import get_json_dict, buff_cookies
 from src.util.category_util import final_categories
 from src.util.logger import log
 
@@ -23,12 +23,12 @@ def collect_item(item):
     if float(min_price) < CRAWL_MIN_PRICE_ITEM:
         log.info("{} price is lower than {}. Drop it!".format(name, CRAWL_MIN_PRICE_ITEM))
         return None
-    elif float(min_price) > CRAWL_MAX_PRICE_ITEM:
+    if float(min_price) > CRAWL_MAX_PRICE_ITEM:
         log.info("{} price is higher than {}. Drop it!".format(name, CRAWL_MAX_PRICE_ITEM))
         return None
-    else:
-        log.info("Finish parsing {}.".format(name))
-        return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
+
+    log.info("Finish parsing {}.".format(name))
+    return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
 
 
 def csgo_all_categories():
@@ -87,13 +87,12 @@ def crawl_goods_by_price_section(category=None):
 
     if root_json is not None:
         if 'data' not in root_json:
-            log.info('Error happens!')
-            log.info('网站返回信息：')
+            log.info('Error happens:')
             log.info(root_json)
             if 'error' in root_json:
-                log.info('错误为: ' + root_json['error'])
-            log.info('如果是登录问题，请先在浏览器登录buff，再粘贴正确的cookie到程序中。当前粘贴的cookie为：' + COOKIE)
-            sys.exit(1)
+                log.info('Error field: ' + root_json['error'])
+            log.info('Please paste correct buff cookie to config, current cookie：' + BUFF_COOKIE)
+            exit(1)
 
         total_page = root_json['data']['total_page']
         total_count = root_json['data']['total_count']

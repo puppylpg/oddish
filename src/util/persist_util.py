@@ -1,7 +1,3 @@
-import os
-
-import pandas as pd
-
 from src.util import converter
 from src.util.logger import log
 
@@ -13,8 +9,7 @@ def tabulate(csgo_items):
         table_info(table)
 
         return table
-    else:
-        return None
+    return None
 
 
 def table_info(table):

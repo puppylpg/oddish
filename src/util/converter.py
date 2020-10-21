@@ -1,9 +1,10 @@
 import json
 from collections import defaultdict
 
+import pandas as pd
+
 from src.data.item import Item
 
-import pandas as pd
 
 
 def df_to_list(table):
@@ -47,7 +48,8 @@ def list_to_df(csgo_items):
     rows_dict = defaultdict(list)
     index = []
     for item in csgo_items:
-        [rows_dict[k].append(v) for k, v in item.to_dict().items()]
+        for k, v in item.to_dict().items():
+            rows_dict[k].append(v)
         index.append(item.id)
 
     table = pd.DataFrame(data=rows_dict, index=index)

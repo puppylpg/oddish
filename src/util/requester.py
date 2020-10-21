@@ -1,7 +1,7 @@
 import json
+import traceback
 import requests
 from requests import Timeout
-import traceback
 
 from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
 from src.util import timer
@@ -46,8 +46,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers = headers, cookies = cookies, timeout = 5, proxies = proxies).text
-        else:
-            return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
+        return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
     except Timeout:
         log.warn("timeout for {}. Try again.".format(url))
     except Exception as e:

@@ -53,4 +53,3 @@ def filter_table(table):
     suggestion_log.info("After threshold(history_sold >= {}) filtered: \n{}\n".format(MIN_SOLD_THRESHOLD, table.describe()))
 
     return table
-
