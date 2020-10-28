@@ -1,5 +1,3 @@
-[toc]
-
 # 爬取steam历史价格
 比如，对于“AK-47（StatTrak™） | 幻影破坏者 (略有磨损)”，原名为：StatTrak™ AK-47 | Phantom Disruptor (Minimal Wear)
 

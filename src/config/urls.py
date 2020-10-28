@@ -24,7 +24,7 @@ def category_page_url(page_num, category):
 def steam_price_history_url(item):
     """7 days history prices"""
     name = item.steam_url.rsplit('/', 1)[-1]
-    return STEAM_ROOT + 'market/pricehistory/?country=CN&currency=1&appid=730&market_hash_name={}'.format(name)
+    return STEAM_ROOT + 'market/pricehistory/?appid=730&market_hash_name={}'.format(name)
 
 
 def buff_price_history_url(item_id):

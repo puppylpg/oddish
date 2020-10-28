@@ -53,7 +53,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
         log.error("unknown error for {}. Try again. Error string: {}".format(url, e))
         log.error(traceback.format_exc())
 
-    data = get_json_dict(url, cookies, proxy, times + 1)
+    data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
 def get_json_dict(url, cookies, proxy = False, times = 1):
