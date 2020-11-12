@@ -13,6 +13,6 @@ def tabulate(csgo_items):
 
 
 def table_info(table):
-    log.info(table)
-    log.info(table.describe())
+    # log.info(table)
+    log.info('Total Items Summary:\n{}'.format(table.describe()))
     log.info('\n')

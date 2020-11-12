@@ -60,5 +60,10 @@ def get_json_dict(url, cookies, proxy = False, times = 1):
     if exist(url):
         return json.loads(fetch(url))
     json_data = get_json_dict_raw(url, cookies, proxy, times)
-    store(url,json_data)
-    return json.loads(json_data)
+
+    if json_data is None:
+        return None
+    else:
+        # can not store None
+        store(url, json_data)
+        return json.loads(json_data)
