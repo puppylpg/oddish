@@ -2,8 +2,8 @@ import traceback
 from datetime import datetime
 
 from src.config.urls import steam_price_history_url
-from src.util.requester import get_json_dict, steam_cookies
 from src.util.logger import log
+from src.util.requester import get_json_dict, steam_cookies
 
 
 def crawl_item_history_price(index, item, total_price_number):
@@ -13,7 +13,8 @@ def crawl_item_history_price(index, item, total_price_number):
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
     steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True)
 
-    if steam_history_prices is not None:
+    # key existence check
+    if (steam_history_prices is not None) and ('prices' in steam_history_prices):
         raw_price_history = steam_history_prices['prices']
         if len(raw_price_history) > 0:
             days = min((datetime.today().date() - datetime.strptime(raw_price_history[0][0], '%b %d %Y %H: +0').date()).days, 7)

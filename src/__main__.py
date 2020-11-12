@@ -12,7 +12,8 @@ if __name__ == '__main__':
 
     table = item_crawler.crawl()
 
-    if table is not None:
+    # table may be empty if no data is received due to timeout
+    if (table is not None) and (not table.empty):
         # suggestion
         suggestion.suggest(table)
     else:

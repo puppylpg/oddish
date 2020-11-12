@@ -1,4 +1,5 @@
 import re
+# from tqdm import tqdm
 
 from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL
 from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
@@ -67,8 +68,10 @@ def crawl_website():
 
     # crawl by categories and price section
     if len(raw_categories) != len(categories):
-        for category in categories:
+        total_category = len(categories)
+        for index, category in enumerate(categories, start=1):
             csgo_items.extend(crawl_goods_by_price_section(category))
+            log.info('GET category {}/{} for ({}).'.format(index, total_category, category))
     else:
         # crawl by price section without category
         csgo_items.extend(crawl_goods_by_price_section(None))
