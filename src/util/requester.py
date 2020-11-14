@@ -48,9 +48,9 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
             return requests.get(url, headers = headers, cookies = cookies, timeout = 5, proxies = proxies).text
         return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
     except Timeout:
-        log.warn("timeout for {}. Try again.".format(url))
+        log.warn("Timeout for {}. Try again.".format(url))
     except Exception as e:
-        log.error("unknown error for {}. Try again. Error string: {}".format(url, e))
+        log.error("Unknown error for {}. Try again. Error string: {}".format(url, e))
         log.error(traceback.format_exc())
 
     data = get_json_dict_raw(url, cookies, proxy, times + 1)

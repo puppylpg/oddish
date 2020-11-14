@@ -58,6 +58,8 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 
 如果不需要代理即可直连steam商店，将配置文件中的 `proxy` 留空即可。
 
+你也可以使用网易UU加速器，只需使用模式一、二或三加速Steam社区/商店，并将配置文件中的`proxy`留空。
+
 # 启动命令
 1. （可选）自定义配置，cookie一定要配置，方法见上述“认证”部分；
 1. 工程根目录下运行：`python -m src`
@@ -70,12 +72,7 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 如果不关心过程，只查看分析结果即可。
 
 ## 依赖
-- python: 3.8.5
-- pandas: 1.1.0
-- numpy: 1.19.1
-- requests: 2.24.0
-
-注意python为python3，requests为socks版本，其他依赖无特殊要求。
+> pip install -r requirements.txt
 
 # 按照需求自定义配置
 修改`config/config.ini`中的一些参数，进行自己希望的自定义配置。所有配置的含义见文件中的注释，或者wiki介绍。
