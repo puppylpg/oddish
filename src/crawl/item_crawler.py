@@ -90,12 +90,15 @@ def crawl_goods_by_price_section(category=None):
 
     if root_json is not None:
         if 'data' not in root_json:
-            log.info('Error happens:')
-            log.info(root_json)
+            log.error('Error happens:')
+            log.error(root_json)
             if 'error' in root_json:
-                log.info('Error field: ' + root_json['error'])
-            log.info('Please paste correct buff cookie to config, current cookie：' + BUFF_COOKIE)
+                log.error('Error field: ' + root_json['error'])
+            log.error('Please paste correct buff cookie to config, current cookie：' + BUFF_COOKIE)
             exit(1)
+
+        if ('total_page' not in root_json['data']) or ('total_count' not in root_json['data']):
+            log.error("No specific page and count info for root page. Please check buff data structure.")
 
         total_page = root_json['data']['total_page']
         total_count = root_json['data']['total_count']
@@ -105,7 +108,7 @@ def crawl_goods_by_price_section(category=None):
             log.info('Page {} / {}'.format(page_num, total_page))
             page_url = goods_section_page_url(category, page_num)
             page_json = get_json_dict(page_url, buff_cookies)
-            if page_json is not None:
+            if (page_json is not None) and ('data' in page_json) and ('items' in page_json['data']):
                 # items on this page
                 items_json = page_json['data']['items']
                 for item in items_json:
@@ -113,6 +116,8 @@ def crawl_goods_by_price_section(category=None):
                     csgo_item = collect_item(item)
                     if csgo_item is not None:
                         category_items.append(csgo_item)
+            else:
+                log.warn("No specific data for page {}. Skip this page.".format(page_url))
 
     return category_items
 
