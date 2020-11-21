@@ -3,19 +3,20 @@ import os
 import sys
 
 from PyQt5 import QtGui
+from PyQt5.QtCore import QObject, pyqtSignal
 from src.config.definitions import config
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
 
-class gui_stream:
-    def __init__(self, textbox):
-        self.textbox = textbox
+class gui_stream(QObject):
+    text_signal = pyqtSignal(str)
+    def __init__(self):
+        super().__init__()
     def write(self, text):
-        self.textbox.moveCursor(QtGui.QTextCursor.End)
-        self.textbox.insertPlainText(text)
+        self.text_signal.emit(text)
     def flush(self):
         pass
-gui_out = gui_stream(None)
+gui_out = gui_stream()
 
 def get_logger(name, log_file, level = logging.DEBUG, format=True):
     """To setup as many loggers as you want"""

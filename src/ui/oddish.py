@@ -3,6 +3,7 @@ import datetime
 from http.cookies import SimpleCookie
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 import src.ui.res_rc
@@ -12,6 +13,28 @@ from src.util.requester import get_json_dict_raw
 from src.crawl import item_crawler
 from src.util import suggestion
 from src.util.logger import gui_out, log
+
+class crawler(QThread):
+    _signal =pyqtSignal()
+    def __init__(self):
+        super().__init__()
+
+    def run(self):
+        start = datetime.datetime.now()
+        log.info("Start Time: {}".format(start))
+
+        table = item_crawler.crawl()
+
+        # table may be empty if no data is received due to timeout
+        if (table is not None) and (not table.empty):
+            # suggestion
+            suggestion.suggest(table)
+        else:
+            log.error('No correct csgo items remain. Please check if conditions are to strict.')
+
+        end = datetime.datetime.now()
+        log.info("END: {}. TIME USED: {}.".format(end, end - start))
+        self._signal.emit()
 
 class browserc(QtWidgets.QWidget):
     def __init__(self, parent = None):
@@ -51,7 +74,7 @@ class oddish(Ui_MainWindow):
         self.steamCookie.setPlainText(SimpleCookie(config.STEAM_COOKIE).output(header = '', sep=';'))
         self.buffCookie.setPlainText(SimpleCookie(config.BUFF_COOKIE).output(header = '', sep=';'))
 
-        gui_out.textbox = self.logger
+        gui_out.text_signal.connect(self.log_output)
         Dialog.closeEvent = self.on_quit
         self.proxyVaild.setIcon(QtGui.QIcon(":icon/attention.png"))
         self.getSteam.clicked.connect(self.get_steam)
@@ -80,21 +103,15 @@ class oddish(Ui_MainWindow):
     def get_buff(self):
         self.buff_cookie = { 'session': "" }
         self.browser.get_cookie('https://buff.163.com', self.buff_cookie, self.buffCookie)
+
     def crawl_start(self):
-        start = datetime.datetime.now()
-        log.info("Start Time: {}".format(start))
-
-        table = item_crawler.crawl()
-
-        # table may be empty if no data is received due to timeout
-        if (table is not None) and (not table.empty):
-            # suggestion
-            suggestion.suggest(table)
-        else:
-            log.error('No correct csgo items remain. Please check if conditions are to strict.')
-
-        end = datetime.datetime.now()
-        log.info("END: {}. TIME USED: {}.".format(end, end - start))
+        self.crawlStart.setEnabled(False)
+        self.crawl_t = crawler()
+        self.crawl_t._signal.connect(functools.partial(self.crawlStart.setEnabled, True))
+        self.crawl_t.start()
+    def log_output(self, text):
+        self.logger.moveCursor(QtGui.QTextCursor.End)
+        self.logger.insertPlainText(text)
 
     def on_quit(self, event):
         config.save()
