@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>attention.png</file>
+    <file>no.png</file>
+    <file>yes.png</file>
+  </qresource>
+</RCC>

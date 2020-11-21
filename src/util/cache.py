@@ -2,10 +2,10 @@ import os
 import time
 import json
 import hashlib
-from src.config.definitions import CACHE_DIR, FORCE_CRAWL, URL_CACHE_HOUR
+from src.config.definitions import config
 from src.util.logger import log
 
-cache_root = os.path.join(os.getcwd(), CACHE_DIR)
+cache_root = os.path.join(os.getcwd(), config.CACHE_DIR)
 if not os.path.exists(cache_root):
     os.mkdir(cache_root)
 
@@ -20,7 +20,7 @@ def url_id(url):
     return hashlib.sha1(url.encode("utf-8")).hexdigest()
 
 def exist(url):
-    if FORCE_CRAWL:
+    if config.FORCE_CRAWL:
         return False
 
     urlid = url_id(url)
@@ -30,7 +30,7 @@ def exist(url):
         if not is_json(f.read()):
             return False
     mtime = os.path.getmtime(os.path.join(cache_root,urlid))
-    return (time.time() - mtime) / 3600 <= URL_CACHE_HOUR
+    return (time.time() - mtime) / 3600 <= config.URL_CACHE_HOUR
 
 def fetch(url):
     urlid = url_id(url)

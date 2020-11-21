@@ -1,4 +1,4 @@
-from src.config.definitions import TOP_N, MIN_SOLD_THRESHOLD
+from src.config.definitions import config
 from src.util import converter
 from src.util.logger import suggestion_log
 
@@ -32,10 +32,9 @@ def sort_by_column(table, suggestion, column, ascending=True):
     filtered_table = filter_table(table)
 
     if ascending:
-        top = filtered_table.nsmallest(TOP_N, column)
-        # top = higher_price.sort_values(by=column, ascending=ascending).head(TOP_N)
+        top = filtered_table.nsmallest(config.TOP_N, column)
     else:
-        top = filtered_table.nlargest(TOP_N, column)
+        top = filtered_table.nlargest(config.TOP_N, column)
 
     suggestion_log.info('收益降序：')
     for item in converter.df_to_list(top):
@@ -49,7 +48,7 @@ def filter_table(table):
     # table = table[table['gap_percent'] <= MAX_GAP_PERCENTAGE]
     # suggestion_log.info("After threshold(gap_percent <= {}) filtered: \n{}".format(MAX_GAP_PERCENTAGE, table.describe()))
 
-    table = table[table['history_sold'] >= MIN_SOLD_THRESHOLD]
-    suggestion_log.info("After threshold(history_sold >= {}) filtered: \n{}\n".format(MIN_SOLD_THRESHOLD, table.describe()))
+    table = table[table['history_sold'] >= config.MIN_SOLD_THRESHOLD]
+    suggestion_log.info("After threshold(history_sold >= {}) filtered: \n{}\n".format(config.MIN_SOLD_THRESHOLD, table.describe()))
 
     return table

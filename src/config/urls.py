@@ -1,6 +1,6 @@
 import sys
 
-from src.config.definitions import CRAWL_MAX_PRICE_ITEM, CRAWL_MIN_PRICE_ITEM
+from src.config.definitions import config
 
 BUFF_ROOT = 'https://buff.163.com/'
 STEAM_ROOT = 'https://steamcommunity.com/'
@@ -38,7 +38,7 @@ def goods_section_root_url(category):
     """
 
     base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.asc&min_price={}&max_price={}' \
-        .format(sys.maxsize, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
+        .format(sys.maxsize, config.CRAWL_MIN_PRICE_ITEM, config.CRAWL_MAX_PRICE_ITEM)
     if category is not None:
         base += '&category={}'.format(category)
 
@@ -47,7 +47,7 @@ def goods_section_root_url(category):
 
 def goods_section_page_url(category, page_num):
     base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}' \
-        .format(page_num, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM)
+        .format(page_num, config.CRAWL_MIN_PRICE_ITEM, config.CRAWL_MAX_PRICE_ITEM)
     if category is not None:
         base += '&category={}'.format(category)
 

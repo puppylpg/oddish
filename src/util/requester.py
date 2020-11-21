@@ -3,49 +3,29 @@ import traceback
 import requests
 from requests import Timeout
 
-from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
+from src.config.definitions import config
 from src.util import timer
 from src.util.logger import log
 from src.util.cache import fetch, store, exist
-
-buff_cookie_str = BUFF_COOKIE
-buff_cookies = {}
-for line in buff_cookie_str.split(';'):
-    if len(line) == 0:
-        break
-    k, v = line.split('=', 1)
-    buff_cookies[k] = v
-
-steam_cookie_str = STEAM_COOKIE
-steam_cookies = {}
-for line in steam_cookie_str.split(';'):
-    if len(line) == 0:
-        break
-    k, v = line.split('=', 1)
-    steam_cookies[k] = v
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
     AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.36'
 }
 
-proxies = {}
-if PROXY:
-    proxies["http"] = PROXY
-    proxies["https"] = PROXY
-
-def get_json_dict_raw(url, cookies, proxy = False, times = 1):
+def get_json_dict_raw(url, cookies = {}, proxy = False, times = 1):
     if exist(url):
         return fetch(url)
 
-    if times > RETRY_TIMES:
-        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
+    if times > config.RETRY_TIMES:
+        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, config.RETRY_TIMES))
         return None
 
-    timer.sleep_awhile()
+    # timer.sleep_awhile()
     try:
-        if proxy and proxies != {}:
-            return requests.get(url, headers = headers, cookies = cookies, timeout = 5, proxies = proxies).text
+        if proxy and config.PROXY != {}:
+            return requests.get(url, headers = headers, cookies = cookies, timeout = 5, 
+                proxies = { "http": config.PROXY, "https": config.PROXY }).text
         return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
     except Timeout:
         log.warn("Timeout for {}. Try again.".format(url))
@@ -56,7 +36,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1):
+def get_json_dict(url, cookies = {}, proxy = False, times = 1):
     if exist(url):
         return json.loads(fetch(url))
     json_data = get_json_dict_raw(url, cookies, proxy, times)
