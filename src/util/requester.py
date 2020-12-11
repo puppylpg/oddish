@@ -26,7 +26,7 @@ for line in steam_cookie_str.split(';'):
     k, v = line.split('=', 1)
     steam_cookies[k] = v
 
-csv = pd.read_csv('ua.csv')
+csv = pd.read_csv('config/reference/ua.csv')
 ua = csv.ua
 
 
@@ -36,7 +36,7 @@ def get_random_ua():
 
 def get_headers():
     specific_ua = get_random_ua()
-    log.info('Random ua: {}'.format(ua))
+    log.info('Random ua: {}'.format(specific_ua))
     return {
         'User-Agent': specific_ua
     }
