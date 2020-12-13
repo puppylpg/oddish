@@ -1,6 +1,8 @@
 import json
 import traceback
 import requests
+import pandas as pd
+import random
 from requests import Timeout
 
 from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
@@ -24,10 +26,21 @@ for line in steam_cookie_str.split(';'):
     k, v = line.split('=', 1)
     steam_cookies[k] = v
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
-}
+csv = pd.read_csv('config/reference/ua.csv')
+ua = csv.ua
+
+
+def get_random_ua():
+    return ua[random.randint(0, ua.size)]
+
+
+def get_headers():
+    specific_ua = get_random_ua()
+    log.info('Random ua: {}'.format(specific_ua))
+    return {
+        'User-Agent': specific_ua
+    }
+
 
 proxies = {}
 if PROXY:
@@ -45,8 +58,8 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     timer.sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
-            return requests.get(url, headers = headers, cookies = cookies, timeout = 5, proxies = proxies).text
-        return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
+            return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
+        return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
     except Timeout:
         log.warn("Timeout for {}. Try again.".format(url))
     except Exception as e:
