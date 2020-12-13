@@ -10,11 +10,33 @@
 
 走路草，白天沉睡，夜晚潜行，我来过，并将信息镌刻在深深的记忆里。
 
-## Aim
+# Aim
 To crawl csgo skin from `buff.163.com`. 
 If there is no data available, crawl from the website, then analyse data from local pandas DataFrame to avoid more crawling behavior.
 
 > **First Rule: BE GOOD AND TRY TO FOLLOW A WEBSITE’S CRAWLING POLICIES. Don't crawl the website with a high frequency!**
+
+# 免责声明
+1. 滥用爬虫有被封号的风险；
+1. 禁止恶意大量爬取buff数据，否则由此造成的责任自负；
+1. 禁止将该爬虫或爬虫获取到的数据用作商业用途，否则由此造成的责任自负；
+1. 该爬虫为兴趣使然，不收取任何费用，也没有任何恶意代码。如果还是出了问题，我们可以协商改进代码，但由此造成的后果（比如账号被封），我们也无能为力；
+
+# 如何防止账号被封禁
+该爬虫只是为了买个性价比最高的饰品卖到steam里换个买游戏钱，所以本质上不会被经常使用，也不需要爬取太多数据。
+
+总体原则是“缓慢”地获取“少量”数据。这里有一些建议，通过修改配置`config.ini`，能帮助你更合理地使用oddish：
+
+1. 缓慢：尽量调大配置里的`frequency_interval_low`和`frequency_interval_high`，爬取时间间隔越长，爬得越慢，越安全；
+1. 少量：
+    1. 尽量使用配置里的`category_white_list`限定爬取饰品的类别，类别越少，要爬的数据量越小；
+    1. 尽量使用配置里的`category_black_list`限定爬取饰品的类别，类别越多，要爬的数据量越小；
+    1. 尽量使用配置里的`crawl_min_price_item`和`crawl_max_price_item`缩小要爬去饰品的价格区间，区间越小，要爬的数据量越小；
+    1. 不要经常使用。就我本人来讲，一月能用一次就不错了……csgo出个大行动，或者有新游戏发行，才有使用oddish的场景。天天爬，一天爬很多次的同学，有那么多游戏要买吗……
+
+- 如果你对该爬虫的代码实现感兴趣，欢迎学习交流；
+- 如果你想买个饰品卖到steam换个游戏钱，欢迎使用；
+- 如果你想倒（往steam里有毛好倒的？倒完卖余额吗？？？），gun (ノ｀Д)ノ
 
 # 我要如何使用
 ## 视频教程
@@ -27,7 +49,7 @@ If there is no data available, crawl from the website, then analyse data from lo
 
 ## 启动前必看
 ### 警告
-**警告：由于现在buff有反爬机制，爬的过频繁会账号冷却。目前程序配置的是2-4s爬取一次。可自行在配置文件`config.ini`里配置间隔时间，但为了您的账号安全，程序无论如何都不会以小于2s的间隔爬数据。**
+**警告：由于现在buff有反爬机制，爬的过频繁会账号冷却。目前程序配置的是4-8s爬取一次。可自行在配置文件`config.ini`里配置间隔时间，但为了您的账号安全，程序无论如何都不会以小于4s的间隔爬数据。**
 
 如果还不放心，建议时间间隔再调大一些。当然，调的越大，爬得越慢。所以建议同时使用配置里的黑白名单缩小饰品爬取范围，
 减少没必要的爬取。
@@ -72,6 +94,13 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 如果不关心过程，只查看分析结果即可。
 
 ## 依赖
+如果只会人肉安装，就安装以下依赖：
+- python: 3.8.5
+- pandas: 1.1.0
+- numpy: 1.19.1
+- requests: 2.24.0
+
+如果懂pip，直接用以下命令安装：
 > pip install -r requirements.txt
 
 # 按照需求自定义配置
