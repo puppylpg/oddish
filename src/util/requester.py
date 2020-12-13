@@ -1,11 +1,10 @@
 import json
 import traceback
-# import aiohttp
-# import asyncio
 import requests
 import pandas as pd
 import random
 from requests import Timeout
+import asyncio
 from aiohttp import ClientSession
 
 from src.config.definitions import PROXY, BUFF_COOKIE, USER_AGENT, STEAM_COOKIE, RETRY_TIMES
@@ -40,7 +39,7 @@ if PROXY:
     proxies["http"] = PROXY
     proxies["https"] = PROXY
 
-def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
+def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
     if exist(url):
         return fetch(url)
 
@@ -48,7 +47,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    timer.sleep_awhile(mode)
+    timer.sleep_awhile(steam_sleep_mode)
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
@@ -62,10 +61,10 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
+def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
     if exist(url):
         return json.loads(fetch(url))
-    json_data = get_json_dict_raw(url, cookies, proxy, times, mode)
+    json_data = get_json_dict_raw(url, cookies, proxy, times, steam_sleep_mode)
 
     if json_data is None:
         return None
@@ -82,14 +81,12 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-
+    await timer.async_sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
-            async with session.get(url, proxies=proxies) as resp:
-                return await resp.text()
+            return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies, connector = aiohttp.TCPConnector(limit=5)).text
             # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
-        async with session.get(url) as resp:
-            return await resp.text()
+        return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, connector = aiohttp.TCPConnector(limit=5)).text
         # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
 
     except Timeout:
@@ -106,10 +103,10 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
     data = await async_get_json_dict_raw(url, cookies, session, proxy, times + 1)
     return data
 
-async def async_get_json_dict(url, cookies, session, proxy = False, times = 1):
+async def async_get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
     if await asyncexist(url):
         return json.loads(await asyncfetch(url))
-    json_data = await async_get_json_dict_raw(url, cookies, session, proxy, times)
+    json_data = await async_get_json_dict_raw(url, cookies, proxy, times, mode)
 
     if json_data is None:
         return None
