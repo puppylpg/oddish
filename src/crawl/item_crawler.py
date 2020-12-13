@@ -9,6 +9,7 @@ from src.util import persist
 from src.util.requester import get_json_dict
 from src.util.category import final_categories
 from src.util.logger import log
+from src.util import timer
 
 
 def collect_item(item):
@@ -85,7 +86,7 @@ def crawl_goods_by_price_section(category=None):
     log.info('GET: {}'.format(root_url))
 
     root_json = get_json_dict(root_url, config.BUFF_COOKIE)
-
+    
     category_items = []
 
     if root_json is not None:

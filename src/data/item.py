@@ -1,5 +1,3 @@
-import numpy as np
-
 from src.config.definitions import config
 
 
@@ -72,4 +70,6 @@ class Item:
 
     @staticmethod
     def centered_average(numbers):
-        return np.percentile(numbers, 25) if len(numbers) != 0 else 0
+        numbert = numbers
+        numbert.sort()
+        return numbert[int(len(numbert) / 4)]

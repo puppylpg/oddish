@@ -13,7 +13,7 @@ def final_categories(categories):
     if len(config.CATEGORY_WHITE_LIST) != 0:
         final = [item for item in categories if any(fnmatch(item, pattern) for pattern in config.CATEGORY_WHITE_LIST)]
     else:
-        final = [item for item in categories if not any(fnmatch(item, pattern) for pattern in CATEGORY_BLACK_LIST)]
+        final = [item for item in categories if not any(fnmatch(item, pattern) for pattern in config.CATEGORY_BLACK_LIST)]
 
     log.info('Final categories({}): {}'.format(len(final), final))
     return final

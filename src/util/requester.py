@@ -4,9 +4,9 @@ import requests
 from requests import Timeout
 
 from src.config.definitions import config
-from src.util import timer
 from src.util.logger import log
 from src.util.cache import fetch, store, exist
+from src.util import timer
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
@@ -14,14 +14,10 @@ headers = {
 }
 
 def get_json_dict_raw(url, cookies = {}, proxy = False, times = 1):
-    if exist(url):
-        return fetch(url)
-
     if times > config.RETRY_TIMES:
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, config.RETRY_TIMES))
         return None
 
-    # timer.sleep_awhile()
     try:
         if proxy and config.PROXY != {}:
             return requests.get(url, headers = headers, cookies = cookies, timeout = 5, 
@@ -39,7 +35,9 @@ def get_json_dict_raw(url, cookies = {}, proxy = False, times = 1):
 def get_json_dict(url, cookies = {}, proxy = False, times = 1):
     if exist(url):
         return json.loads(fetch(url))
+
     json_data = get_json_dict_raw(url, cookies, proxy, times)
+    timer.sleep_awhile()
 
     if json_data is None:
         return None
