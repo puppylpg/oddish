@@ -30,39 +30,17 @@ for line in steam_cookie_str.split(';'):
     k = k.lstrip()
     steam_cookies[k] = v
 
-# get user-agent database
-csv = pd.read_csv('config/reference/ua.csv')
-ua = csv.ua
-
-
-# get user-agent
-def get_ua():
-    if USER_AGENT:
-        return USER_AGENT
-    else:
-        return get_random_ua()
-
-
-def get_random_ua():
-    return ua[random.randint(0, ua.size)]
-
-
-def get_headers():
-    target_ua = get_ua()
-    log.info('use User-Agent: {}'.format(target_ua))
-    return {
-        'User-Agent': target_ua
-    }
-
-
-headers = get_headers()
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
+}
 
 proxies = {}
 if PROXY:
     proxies["http"] = PROXY
     proxies["https"] = PROXY
 
-def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
+def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     if exist(url):
         return fetch(url)
 
@@ -70,7 +48,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode =
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    timer.sleep_awhile(steam_sleep_mode)
+    timer.sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
@@ -84,10 +62,10 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode =
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
+def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
     if exist(url):
         return json.loads(fetch(url))
-    json_data = get_json_dict_raw(url, cookies, proxy, times, steam_sleep_mode)
+    json_data = get_json_dict_raw(url, cookies, proxy, times, mode)
 
     if json_data is None:
         return None

@@ -17,9 +17,12 @@ def sleep_awhile(mode = 0):
     log.info("sleep {}s at {}".format(interval, datetime.datetime.now()))
     time.sleep(interval)
 
-async def async_sleep_awhile():
+def sleep_awhile(mode = 0):
     low = max(FREQUENCY_INTERVAL_LOW, 2)
     high = max(2, FREQUENCY_INTERVAL_HIGH)
-    interval = random.randint(low, high)
+    if mode == 0:
+        interval = random.randint(low, high)
+    elif mode == 1:
+        interval = 1/(random.randint(5, 10))
     log.info("sleep {}s at {}".format(interval, datetime.datetime.now()))
     await asyncio.sleep(interval)
