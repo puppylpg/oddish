@@ -11,7 +11,7 @@ def crawl_item_history_price(index, item, total_price_number):
 
     steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
-    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True)
+    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True, mode = 1)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):

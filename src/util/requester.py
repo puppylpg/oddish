@@ -26,7 +26,7 @@ for line in steam_cookie_str.split(';'):
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.36'
+    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
 }
 
 proxies = {}
@@ -34,7 +34,7 @@ if PROXY:
     proxies["http"] = PROXY
     proxies["https"] = PROXY
 
-def get_json_dict_raw(url, cookies, proxy = False, times = 1):
+def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     if exist(url):
         return fetch(url)
 
@@ -42,7 +42,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    timer.sleep_awhile()
+    timer.sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers = headers, cookies = cookies, timeout = 5, proxies = proxies).text
@@ -56,10 +56,10 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1):
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1):
+def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
     if exist(url):
         return json.loads(fetch(url))
-    json_data = get_json_dict_raw(url, cookies, proxy, times)
+    json_data = get_json_dict_raw(url, cookies, proxy, times, mode)
 
     if json_data is None:
         return None
