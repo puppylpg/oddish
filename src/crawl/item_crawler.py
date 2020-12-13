@@ -95,8 +95,8 @@ def crawl_goods_by_price_section(category=None):
             log.error(root_json)
             if 'error' in root_json:
                 log.error('Error field: ' + root_json['error'])
-            log.error('Please paste correct buff cookie to config, current cookie：' + evals(config.BUFF_COOKIE))
-            exit(1)
+            log.error('Please paste correct buff cookie to config, current cookie：' + str(config.BUFF_COOKIE))
+            return []
 
         if ('total_page' not in root_json['data']) or ('total_count' not in root_json['data']):
             log.error("No specific page and count info for root page. Please check buff data structure.")

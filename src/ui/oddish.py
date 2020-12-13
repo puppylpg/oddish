@@ -3,6 +3,7 @@ import datetime
 from http.cookies import SimpleCookie
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -114,4 +115,7 @@ class oddish(Ui_MainWindow):
         self.logger.insertPlainText(text)
 
     def on_quit(self, event):
-        config.save()
+        reply = QMessageBox.question(QtWidgets.QMainWindow(), '信息', '保存配置吗？', 
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            config.save()

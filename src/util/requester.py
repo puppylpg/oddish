@@ -14,7 +14,6 @@ import pandas as pd
 csv = pd.read_csv('config/reference/ua.csv')
 ua = csv.ua
 
-
 def get_random_ua():
     return ua[random.randint(0, ua.size)]
 
