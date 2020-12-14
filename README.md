@@ -87,7 +87,7 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 1. 工程根目录下运行：`python -m src`
 
 ## 输出结果
-- database：爬的数据；
+~~- database：爬的数据；~~
 - log: 日志；
 - suggestion：分析结果；
 
