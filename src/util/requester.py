@@ -62,7 +62,7 @@ if PROXY:
     proxies["http"] = PROXY
     proxies["https"] = PROXY
 
-def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
+def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
     if exist(url):
         return fetch(url)
 
@@ -70,7 +70,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    timer.sleep_awhile(mode)
+    timer.sleep_awhile(steam_sleep_mode)
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
@@ -84,10 +84,10 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
+def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
     if exist(url):
         return json.loads(fetch(url))
-    json_data = get_json_dict_raw(url, cookies, proxy, times, mode)
+    json_data = get_json_dict_raw(url, cookies, proxy, times, steam_sleep_mode)
 
     if json_data is None:
         return None
@@ -97,8 +97,9 @@ def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
         return json.loads(json_data)
 
 async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = False, times = 1):
-    if await asyncexist(url):
-        return asyncfetch(url)
+    if exist(url):
+    # if await asyncexist(url):
+        return await asyncfetch(url)
 
     if times > RETRY_TIMES:
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
@@ -120,12 +121,12 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
         log.error("Unknown error for {}. Try again. Error string: {}".format(url, e))
         log.error(traceback.format_exc())
 
+    # 首次出错时异步休眠，第二次出错时全体任务休眠。
     await timer.async_sleep_awhile()
-
     if times == 2:
         timer.sleep_awhile()
 
-    data = await async_get_json_dict_raw(url, cookies, proxy, times + 1)
+    data = await async_get_json_dict_raw(url, cookies, session, proxy, times + 1)
     return data
 
 async def async_get_json_dict(url, cookies, session, proxy = False, times = 1):
