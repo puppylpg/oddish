@@ -103,7 +103,6 @@ class oddish(Ui_MainWindow):
         self.priceMax.textChanged.connect(self.change_price_range)
         self.typeRestrict.clicked.connect(self.select)
         self.browser = browserc()
-        self.selector = selector()
 
     def change_price_range(self):
         config.CRAWL_MIN_PRICE_ITEM = self.priceMin.value()
@@ -135,6 +134,7 @@ class oddish(Ui_MainWindow):
         self.buff_cookie = { 'session': "" }
         self.browser.get_cookie('https://buff.163.com', self.buff_cookie, self.buffCookie)
     def select(self):
+        self.selector = selector()
         self.selector.show()
 
     def crawl_start(self):
