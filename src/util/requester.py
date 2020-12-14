@@ -98,7 +98,6 @@ def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
 
 async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = False, times = 1):
     if exist(url):
-    # if await asyncexist(url):
         return await asyncfetch(url)
 
     if times > RETRY_TIMES:
