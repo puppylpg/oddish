@@ -26,9 +26,7 @@ class crawler(QThread):
 
         table = item_crawler.crawl()
 
-        # table may be empty if no data is received due to timeout
         if (table is not None) and (not table.empty):
-            # suggestion
             suggestion.suggest(table)
         else:
             log.error('No correct csgo items remain. Please check if conditions are to strict.')
@@ -36,6 +34,20 @@ class crawler(QThread):
         end = datetime.datetime.now()
         log.info("END: {}. TIME USED: {}.".format(end, end - start))
         self._signal.emit()
+
+class proxy_checker(QThread):
+    _signal =pyqtSignal(bool)
+    def __init__(self, proxy):
+        super().__init__()
+        self.proxy = proxy
+    def run(self):
+        config.PROXY = self.proxy
+        flag = True
+        if get_json_dict_raw("https://steamcommunity.com/market/", {}, True):
+            self._signal.emit(True)
+        else:
+            self._signal.emit(False)
+
 
 class browserc(QtWidgets.QWidget):
     def __init__(self, parent = None):
@@ -90,13 +102,19 @@ class oddish(Ui_MainWindow):
             return self.proxyEditor.toPlainText()
         else:
             return ""
-    def check_proxy(self):
-        config.PROXY = self.proxyEditor.toPlainText()
-        flag = True
-        if get_json_dict_raw("https://steamcommunity.com/market/", {}, True):
+
+    def proxy_change_icon(self, f):
+        if f:
             self.proxyVaild.setIcon(QtGui.QIcon(":icon/yes.png"))
         else:
             self.proxyVaild.setIcon(QtGui.QIcon(":icon/no.png"))
+        self.proxyVaild.setEnabled(True)
+
+    def check_proxy(self):
+        self.proxyVaild.setEnabled(False)
+        self.proxy_check_t = proxy_checker(self.get_proxy())
+        self.proxy_check_t._signal.connect(self.proxy_change_icon)
+        self.proxy_check_t.start()
 
     def get_steam(self):
         self.steam_cookie = { 'sessionid': "" , 'steamLoginSecure': ""}
