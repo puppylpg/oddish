@@ -1,11 +1,11 @@
 import json
 import traceback
-import aiohttp
+# import aiohttp
+# import asyncio
 import requests
 import pandas as pd
 import random
 from requests import Timeout
-import asyncio
 from aiohttp import ClientSession
 
 from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
@@ -27,6 +27,7 @@ for line in steam_cookie_str.split(';'):
     if len(line) == 0:
         break
     k, v = line.split('=', 1)
+    k = k.lstrip()
     steam_cookies[k] = v
 
 csv = pd.read_csv('config/reference/ua.csv')
@@ -84,7 +85,7 @@ def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
         store(url, json_data)
         return json.loads(json_data)
 
-async def async_get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
+async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = False, times = 1):
     if await asyncexist(url):
         return asyncfetch(url)
 
@@ -92,12 +93,14 @@ async def async_get_json_dict_raw(url, cookies, proxy = False, times = 1, mode =
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    await timer.async_sleep_awhile(mode)
+
     try:
         if proxy and proxies != {}:
-            return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies, connector = aiohttp.TCPConnector(limit=5)).text
+            async with session.get(url, proxies=proxies) as resp:
+                return await resp.text()
             # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
-        return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, connector = aiohttp.TCPConnector(limit=5)).text
+        async with session.get(url) as resp:
+            return await resp.text()
         # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
 
     except Timeout:
@@ -106,13 +109,18 @@ async def async_get_json_dict_raw(url, cookies, proxy = False, times = 1, mode =
         log.error("Unknown error for {}. Try again. Error string: {}".format(url, e))
         log.error(traceback.format_exc())
 
-    data = await async_get_json_dict_raw(url, cookies, proxy, times + 1, mode)
+    await timer.async_sleep_awhile()
+
+    if times == 2:
+        timer.sleep_awhile()
+
+    data = await async_get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-async def async_get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
+async def async_get_json_dict(url, cookies, session, proxy = False, times = 1):
     if await asyncexist(url):
         return json.loads(await asyncfetch(url))
-    json_data = await async_get_json_dict_raw(url, cookies, proxy, times, mode)
+    json_data = await async_get_json_dict_raw(url, cookies, session, proxy, times)
 
     if json_data is None:
         return None
