@@ -104,3 +104,4 @@ def crawl_history_price(csgo_items):
             crawl_item_history_price(index, item, total_price_number)
         except Exception as e:
             log.error(traceback.format_exc())
+            
