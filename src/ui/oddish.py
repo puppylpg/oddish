@@ -10,6 +10,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 import src.ui.res_rc
 from src.config.definitions import config
 from src.ui.oddish_base import Ui_MainWindow
+from src.ui.selector import selector
 from src.util.requester import get_json_dict_raw
 from src.crawl import item_crawler
 from src.util import suggestion
@@ -83,6 +84,8 @@ class oddish(Ui_MainWindow):
     buff_cookie = { 'session': "" }
     def __init__(self, Dialog):
         super().setupUi(Dialog)
+        MainWindow = QtWidgets.QMainWindow()
+        MainWindow.setFixedSize(MainWindow.width(), MainWindow.height())
         self.proxyEditor.setPlainText(config.PROXY)
         self.steamCookie.setPlainText(SimpleCookie(config.STEAM_COOKIE).output(header = '', sep=';'))
         self.buffCookie.setPlainText(SimpleCookie(config.BUFF_COOKIE).output(header = '', sep=';'))
@@ -96,7 +99,16 @@ class oddish(Ui_MainWindow):
         self.proxyEditor.textChanged.connect(
             functools.partial(self.proxyVaild.setIcon, QtGui.QIcon(":icon/attention.png")))
         self.proxyVaild.clicked.connect(self.check_proxy)
+        self.priceMin.textChanged.connect(self.change_price_range)
+        self.priceMax.textChanged.connect(self.change_price_range)
+        self.typeRestrict.clicked.connect(self.select)
         self.browser = browserc()
+        self.selector = selector()
+
+    def change_price_range(self):
+        config.CRAWL_MIN_PRICE_ITEM = self.priceMin.value()
+        config.CRAWL_MAX_PRICE_ITEM = self.priceMax.value()
+
     def get_proxy(self):
         if self.useProxy.isChecked():
             return self.proxyEditor.toPlainText()
@@ -122,6 +134,8 @@ class oddish(Ui_MainWindow):
     def get_buff(self):
         self.buff_cookie = { 'session': "" }
         self.browser.get_cookie('https://buff.163.com', self.buff_cookie, self.buffCookie)
+    def select(self):
+        self.selector.show()
 
     def crawl_start(self):
         self.crawlStart.setEnabled(False)

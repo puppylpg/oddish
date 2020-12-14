@@ -33,26 +33,29 @@ def collect_item(item):
     return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
 
 
+# def csgo_all_categories():
+#     prefix = '<div class="h1z1-selType type_csgo" id="j_h1z1-selType">'
+#     suffix = '</ul> </div> </div> <div class="criteria">'
+#     # to match all csgo skin categories
+#     category_regex = re.compile(r'<li value="(.+?)"', re.DOTALL)
+
+#     # entry page
+#     root_url = goods_root_url()
+
+#     log.info("GET: " + root_url)
+#     root_html = urllib.request.urlopen(root_url).read().decode('utf-8')
+
+#     remove_prefix = root_html.split(prefix, 1)[1]
+#     core_html = remove_prefix.split(suffix, 1)[0]
+
+#     # all categories
+#     categories = category_regex.findall(core_html)
+#     log.info("All categories({}): {}".format(len(categories), categories))
+#     print(categories)
+#     return categories
+
 def csgo_all_categories():
-    prefix = '<div class="h1z1-selType type_csgo" id="j_h1z1-selType">'
-    suffix = '</ul> </div> </div> <div class="criteria">'
-    # to match all csgo skin categories
-    category_regex = re.compile(r'<li value="(.+?)"', re.DOTALL)
-
-    # entry page
-    root_url = goods_root_url()
-
-    log.info("GET: " + root_url)
-    root_html = urllib.request.urlopen(root_url).read().decode('utf-8')
-
-    remove_prefix = root_html.split(prefix, 1)[1]
-    core_html = remove_prefix.split(suffix, 1)[0]
-
-    # all categories
-    categories = category_regex.findall(core_html)
-    log.info("All categories({}): {}".format(len(categories), categories))
-    return categories
-
+    return ['weapon_knife_survival_bowie', 'weapon_knife_butterfly', 'weapon_knife_falchion', 'weapon_knife_flip', 'weapon_knife_gut', 'weapon_knife_tactical', 'weapon_knife_m9_bayonet', 'weapon_bayonet', 'weapon_knife_karambit', 'weapon_knife_push', 'weapon_knife_stiletto', 'weapon_knife_ursus', 'weapon_knife_gypsy_jackknife', 'weapon_knife_widowmaker', 'weapon_knife_css', 'weapon_knife_cord', 'weapon_knife_canis', 'weapon_knife_outdoor', 'weapon_knife_skeleton', 'weapon_hkp2000', 'weapon_usp_silencer', 'weapon_glock', 'weapon_p250', 'weapon_fiveseven', 'weapon_cz75a', 'weapon_tec9', 'weapon_revolver', 'weapon_deagle', 'weapon_elite', 'weapon_galilar', 'weapon_scar20', 'weapon_awp', 'weapon_ak47', 'weapon_famas', 'weapon_m4a1', 'weapon_m4a1_silencer', 'weapon_sg556', 'weapon_ssg08', 'weapon_aug', 'weapon_g3sg1', 'weapon_p90', 'weapon_mac10', 'weapon_ump45', 'weapon_mp7', 'weapon_bizon', 'weapon_mp9', 'weapon_mp5sd', 'weapon_sawedoff', 'weapon_xm1014', 'weapon_nova', 'weapon_mag7', 'weapon_m249', 'weapon_negev', 'weapon_bloodhound_gloves', 'weapon_driver_gloves', 'weapon_hand_wraps', 'weapon_moto_gloves', 'weapon_specialist_gloves', 'weapon_sport_gloves', 'weapon_hydra_gloves', 'weapon_brokenfang_gloves', 'sticker_broken_fang', 'sticker_recoil', 'warhammer_sticker', 'alyx_sticker_capsule', 'halo_capsule', 'shattered_web', 'cs20_capsule', '2019_StarLadder_Berlin_Major', 'crate_sticker_pack_chicken_capsule_lootlist', 'crate_sticker_pack_feral_predators_capsule_lootlist', 'sticker_tournament15', 'skill_groups_capsule', 'sticker_tournament14', 'sticker_tournament13', 'sticker_tournament12', 'sticker_tournament11', 'sticker_tournament10', 'sticker_tournament9', 'sticker_tournament8', 'sticker_tournament7', 'sticker_tournament6', 'sticker_tournament5', 'sticker_tournament4', 'sticker_tournament3', 'crate_sticker_pack_comm2018_01_capsule_lootlist', 'crate_sticker_pack01', 'crate_sticker_pack02', 'crate_sticker_pack_enfu_capsule_lootlist', 'crate_sticker_pack_illuminate_capsule_01_lootlist', 'crate_sticker_pack_illuminate_capsule_02_lootlist', 'crate_sticker_pack_community01', 'crate_sticker_pack_bestiary_capsule_lootlist', 'crate_sticker_pack_slid3_capsule_lootlist', 'crate_sticker_pack_sugarface_capsule_lootlist', 'crate_sticker_pack_pinups_capsule_lootlist', 'crate_sticker_pack_team_roles_capsule_lootlist', 'sticker_other', 'csgo_type_tool', 'csgo_type_spray', 'csgo_type_collectible', 'csgo_type_ticket', 'csgo_tool_gifttag', 'csgo_type_musickit', 'csgo_type_weaponcase', 'csgo_tool_weaponcase_keytag', 'type_customplayer', 'csgo_tool_patch']
 
 def enrich_item_with_price_history(csgo_items):
     # crawl price for all items
