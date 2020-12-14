@@ -8,7 +8,7 @@ import random
 from requests import Timeout
 from aiohttp import ClientSession
 
-from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
+from src.config.definitions import PROXY, BUFF_COOKIE, USER_AGENT, STEAM_COOKIE, RETRY_TIMES
 from src.util import timer
 from src.util.logger import log
 from src.util.cache import fetch, store, exist, asyncexist, asyncfetch, asyncstore
@@ -30,8 +30,17 @@ for line in steam_cookie_str.split(';'):
     k = k.lstrip()
     steam_cookies[k] = v
 
+# get user-agent database
 csv = pd.read_csv('config/reference/ua.csv')
 ua = csv.ua
+
+
+# get user-agent
+def get_ua():
+    if USER_AGENT:
+        return USER_AGENT
+    else:
+        return get_random_ua()
 
 
 def get_random_ua():
@@ -39,12 +48,14 @@ def get_random_ua():
 
 
 def get_headers():
-    specific_ua = get_random_ua()
-    log.info('Random ua: {}'.format(specific_ua))
+    target_ua = get_ua()
+    log.info('use User-Agent: {}'.format(target_ua))
     return {
-        'User-Agent': specific_ua
+        'User-Agent': target_ua
     }
 
+
+headers = get_headers()
 
 proxies = {}
 if PROXY:
@@ -62,8 +73,8 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
     timer.sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
-            return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
-        return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
+            return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
+        return requests.get(url, headers=headers, cookies=cookies, timeout=5).text
     except Timeout:
         log.warn("Timeout for {}. Try again.".format(url))
     except Exception as e:
