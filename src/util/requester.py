@@ -1,14 +1,17 @@
 import json
 import traceback
+import aiohttp
 import requests
 import pandas as pd
 import random
 from requests import Timeout
+import asyncio
+from aiohttp import ClientSession
 
 from src.config.definitions import PROXY, BUFF_COOKIE, STEAM_COOKIE, RETRY_TIMES
 from src.util import timer
 from src.util.logger import log
-from src.util.cache import fetch, store, exist
+from src.util.cache import fetch, store, exist, asyncexist, asyncfetch, asyncstore
 
 buff_cookie_str = BUFF_COOKIE
 buff_cookies = {}
@@ -79,4 +82,41 @@ def get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
     else:
         # can not store None
         store(url, json_data)
+        return json.loads(json_data)
+
+async def async_get_json_dict_raw(url, cookies, proxy = False, times = 1, mode = 0):
+    if await asyncexist(url):
+        return asyncfetch(url)
+
+    if times > RETRY_TIMES:
+        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
+        return None
+
+    await timer.async_sleep_awhile(mode)
+    try:
+        if proxy and proxies != {}:
+            return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies, connector = aiohttp.TCPConnector(limit=5)).text
+            # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
+        return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, connector = aiohttp.TCPConnector(limit=5)).text
+        # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
+
+    except Timeout:
+        log.warn("Timeout for {}. Try again.".format(url))
+    except Exception as e:
+        log.error("Unknown error for {}. Try again. Error string: {}".format(url, e))
+        log.error(traceback.format_exc())
+
+    data = await async_get_json_dict_raw(url, cookies, proxy, times + 1, mode)
+    return data
+
+async def async_get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
+    if await asyncexist(url):
+        return json.loads(await asyncfetch(url))
+    json_data = await async_get_json_dict_raw(url, cookies, proxy, times, mode)
+
+    if json_data is None:
+        return None
+    else:
+        # can not store None
+        await asyncstore(url, json_data)
         return json.loads(json_data)

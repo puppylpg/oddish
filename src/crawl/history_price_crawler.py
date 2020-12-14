@@ -1,17 +1,18 @@
 import traceback
+import asyncio
 from datetime import datetime
 
 from src.config.urls import steam_price_history_url
 from src.util.logger import log
-from src.util.requester import get_json_dict, steam_cookies
+from src.util.requester import async_get_json_dict, steam_cookies
 
 
-def crawl_item_history_price(index, item, total_price_number):
+async def crawl_item_history_price(index, item, total_price_number):
     history_prices = []
 
     steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
-    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, True, mode = 1)
+    steam_history_prices = await async_get_json_dict(steam_price_url, steam_cookies, True, mode = 1)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
@@ -34,12 +35,19 @@ def crawl_item_history_price(index, item, total_price_number):
         log.info('totally {} pieces of price history in {} days for {}\n'.format(len(history_prices), days, item.name))
 
 
-def crawl_history_price(csgo_items):
+async def crawl_history_price(csgo_items):
     total_price_number = len(csgo_items)
     log.info('Total {} items to get history price.'.format(total_price_number))
 
+    tasks = []
     for index, item in enumerate(csgo_items, start=1):
         try:
-            crawl_item_history_price(index, item, total_price_number)
+            tasks.append(
+                crawl_item_history_price(index, item, total_price_number))
         except Exception as e:
             log.error(traceback.format_exc())
+
+    try:
+        await asyncio.gather(*tasks)
+    except Exception as e:
+        log.error(traceback.format_exc())

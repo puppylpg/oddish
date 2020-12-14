@@ -1,4 +1,5 @@
 import re
+import asyncio
 # from tqdm import tqdm
 
 from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL
@@ -55,7 +56,8 @@ def csgo_all_categories():
 
 def enrich_item_with_price_history(csgo_items):
     # crawl price for all items
-    history_price_crawler.crawl_history_price(csgo_items)
+    asyncio.run(
+        history_price_crawler.crawl_history_price(csgo_items))
     return csgo_items
 
 
