@@ -25,6 +25,7 @@ except IOError:
 
 # cookie and api
 BUFF_COOKIE = config['BASIC']['buff_cookie']
+USER_AGENT = config['BASIC']['buff_user_agent']
 STEAM_COOKIE = config['BASIC']['steam_cookie']
 
 # proxy
