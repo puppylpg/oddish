@@ -64,29 +64,6 @@ async def async_crawl_history_price(csgo_items):
         except Exception as e:
             log.error(traceback.format_exc())
 
-async def async_crawl_history_price(csgo_items):
-    total_price_number = len(csgo_items)
-    log.info('Total {} items to get history price.'.format(total_price_number))
-
-    tasks = []
-    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector = aiohttp.TCPConnector(limit=5)) as session:
-        for index, item in enumerate(csgo_items, start=1):
-            try:
-                tasks.append(
-                    async_crawl_item_history_price(index, item, total_price_number, session))
-            except Exception as e:
-                log.error(traceback.format_exc())
-            # 每次执行100个任务：
-            if len(tasks) > 100:
-                try:
-                    await asyncio.gather(*tasks)
-                except Exception as e:
-                    log.error(traceback.format_exc())
-                tasks = []
-        try:
-            await asyncio.gather(*tasks)
-        except Exception as e:
-            log.error(traceback.format_exc())
 
 def crawl_item_history_price(index, item, total_price_number):
     history_prices = []
