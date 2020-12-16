@@ -84,7 +84,8 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
     await timer.async_sleep_awhile(mode)
     try:
         if proxy and proxies != {}:
-            return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies, connector = aiohttp.TCPConnector(limit=5)).text
+            async with session.get(url, proxy=proxies["http"]) as resp:
+                return await resp.text()
             # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
         return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, connector = aiohttp.TCPConnector(limit=5)).text
         # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text

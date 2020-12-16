@@ -57,6 +57,7 @@ def csgo_all_categories():
 def enrich_item_with_price_history(csgo_items, crawl_mode = True):
     # crawl price for all items
     if crawl_mode == True:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.run(
             history_price_crawler.async_crawl_history_price(csgo_items))
     else:

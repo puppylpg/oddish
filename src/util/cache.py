@@ -68,7 +68,7 @@ def store(url, data):
     f.close()
 
 async def asyncstore(url, data):
-    if asyncexist(url):
+    if await asyncexist(url):
         return
     urlid = url_id(url)
     async with aiofiles.open(os.path.join(cache_root,urlid), "w", encoding='utf-8') as f:
