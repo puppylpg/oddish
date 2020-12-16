@@ -16,7 +16,7 @@ async def async_crawl_item_history_price(index, item, total_price_number, sessio
     steam_price_url = steam_price_history_url(item)
     log.info('prepare to GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
 
-    steam_history_prices = await async_get_json_dict(steam_price_url, steam_cookies, session)
+    steam_history_prices = await async_get_json_dict(steam_price_url, steam_cookies, session, proxy=True)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
@@ -104,4 +104,3 @@ def crawl_history_price(csgo_items):
             crawl_item_history_price(index, item, total_price_number)
         except Exception as e:
             log.error(traceback.format_exc())
-            

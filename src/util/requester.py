@@ -105,7 +105,7 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
 
     try:
         if proxy and proxies != {}:
-            async with session.get(url, proxies=proxies) as resp:
+            async with session.get(url, proxy=proxies["http"]) as resp:
                 return await resp.text()
             # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
         async with session.get(url) as resp:
