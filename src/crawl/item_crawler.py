@@ -1,5 +1,6 @@
 import re
 import asyncio
+import math
 # from tqdm import tqdm
 
 from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL, CRAWL_MODE
@@ -107,11 +108,25 @@ def crawl_goods_by_price_section(category=None):
 
         total_page = root_json['data']['total_page']
         total_count = root_json['data']['total_count']
+
+        # buff有个page_size参数，默认一页请求20个item，最多80
+        # 尝试使用80，能将对buff的访问量减少为原来的1/4。暂时不作为可配置项，硬编码在代码里
+        use_max_page_size = True
+        max_page_size = 80
+        default_page_size = 20
+
+        # 使用80一页后，新的页码
+        if use_max_page_size:
+            total_page = math.ceil(total_page / max_page_size)
+
         log.info('Totally {} items of {} pages to crawl.'.format(total_count, total_page))
         # get each page
         for page_num in range(1, total_page + 1):
             log.info('Page {} / {}'.format(page_num, total_page))
-            page_url = goods_section_page_url(category, page_num)
+            page_url = goods_section_page_url(
+                category, page_num,
+                page_size=max_page_size if use_max_page_size else default_page_size
+            )
             page_json = get_json_dict(page_url, buff_cookies)
             if (page_json is not None) and ('data' in page_json) and ('items' in page_json['data']):
                 # items on this page
