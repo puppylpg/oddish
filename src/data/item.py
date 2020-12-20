@@ -38,7 +38,7 @@ class Item:
 
     def detail(self):
         return "{}: {}(steam .25 percentile sold price after tax) - {}(buff) = {}(beyond {:.2%}, {:.2%}). " \
-               "Sold {} items in {} days.\n steam url:{}" \
+               "Sold {} items in {} days.\n steam url:{}\n buff url: https://buff.163.com/market/goods?goods_id={}&from=market#tab=selling" \
             .format(
             self.name,
             self.average_sold_price_after_tax,
@@ -48,7 +48,8 @@ class Item:
             self.discount_percent,
             self.history_sold,
             self.history_days,
-            self.steam_url
+            self.steam_url,
+            self.id
         )
 
     def to_dict(self):

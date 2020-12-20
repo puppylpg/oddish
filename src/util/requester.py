@@ -4,7 +4,6 @@ import requests
 import pandas as pd
 import random
 from requests import Timeout
-import asyncio
 from aiohttp import ClientSession
 
 from src.config.definitions import PROXY, BUFF_COOKIE, USER_AGENT, STEAM_COOKIE, RETRY_TIMES
@@ -29,10 +28,32 @@ for line in steam_cookie_str.split(';'):
     k = k.lstrip()
     steam_cookies[k] = v
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
-}
+# get user-agent database
+csv = pd.read_csv('config/reference/ua.csv')
+ua = csv.ua
+
+
+# get user-agent
+def get_ua():
+    if USER_AGENT:
+        return USER_AGENT
+    else:
+        return get_random_ua()
+
+
+def get_random_ua():
+    return ua[random.randint(0, ua.size)]
+
+
+def get_headers():
+    target_ua = get_ua()
+    log.info('use User-Agent: {}'.format(target_ua))
+    return {
+        'User-Agent': target_ua
+    }
+
+
+headers = get_headers()
 
 proxies = {}
 if PROXY:
@@ -81,13 +102,14 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    await timer.async_sleep_awhile(mode)
+
     try:
         if proxy and proxies != {}:
             async with session.get(url, proxy=proxies["http"]) as resp:
                 return await resp.text()
             # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5, proxies=proxies).text
-        return await aiohttp.request(method = "GET", url = url, headers=get_headers(), cookies=cookies, timeout=5, connector = aiohttp.TCPConnector(limit=5)).text
+        async with session.get(url) as resp:
+            return await resp.text()
         # return requests.get(url, headers=get_headers(), cookies=cookies, timeout=5).text
 
     except Timeout:
@@ -104,10 +126,10 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
     data = await async_get_json_dict_raw(url, cookies, session, proxy, times + 1)
     return data
 
-async def async_get_json_dict(url, cookies, proxy = False, times = 1, mode = 0):
+async def async_get_json_dict(url, cookies, session, proxy = False, times = 1):
     if await asyncexist(url):
         return json.loads(await asyncfetch(url))
-    json_data = await async_get_json_dict_raw(url, cookies, proxy, times, mode)
+    json_data = await async_get_json_dict_raw(url, cookies, session, proxy, times)
 
     if json_data is None:
         return None
