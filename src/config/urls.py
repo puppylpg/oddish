@@ -33,8 +33,10 @@ def buff_price_history_url(item_id):
 
 def goods_section_root_url(category):
     """
-    buff is strange: only request with page number beyond actual upper bound,
+    buff HAS BUG: only request with page number beyond actual upper bound,
     can you get the true page number with this price section.
+
+    So sys.maxsize here is used as page number in order to get all page number and item count.
     """
 
     base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.asc&min_price={}&max_price={}' \
@@ -45,9 +47,10 @@ def goods_section_root_url(category):
     return base
 
 
-def goods_section_page_url(category, page_num):
-    base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}' \
-        .format(page_num, config.CRAWL_MIN_PRICE_ITEM, config.CRAWL_MAX_PRICE_ITEM)
+def goods_section_page_url(category, page_num, page_size=20):
+    # buff support page_size parameter, but the max value can only be 80
+    base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}&page_size={}' \
+        .format(page_num, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, page_size)
     if category is not None:
         base += '&category={}'.format(category)
 

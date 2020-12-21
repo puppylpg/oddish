@@ -1,5 +1,5 @@
 import re
-import urllib.request
+import math
 
 from src.config.definitions import config
 from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
@@ -31,28 +31,6 @@ def collect_item(item):
 
     log.info("Finish parsing {}.".format(name))
     return Item(buff_id, name, min_price, sell_num, steam_url, steam_predict_price, buy_max_price)
-
-
-# def csgo_all_categories():
-#     prefix = '<div class="h1z1-selType type_csgo" id="j_h1z1-selType">'
-#     suffix = '</ul> </div> </div> <div class="criteria">'
-#     # to match all csgo skin categories
-#     category_regex = re.compile(r'<li value="(.+?)"', re.DOTALL)
-
-#     # entry page
-#     root_url = goods_root_url()
-
-#     log.info("GET: " + root_url)
-#     root_html = urllib.request.urlopen(root_url).read().decode('utf-8')
-
-#     remove_prefix = root_html.split(prefix, 1)[1]
-#     core_html = remove_prefix.split(suffix, 1)[0]
-
-#     # all categories
-#     categories = category_regex.findall(core_html)
-#     log.info("All categories({}): {}".format(len(categories), categories))
-#     print(categories)
-#     return categories
 
 def csgo_all_categories():
     return ['weapon_knife_survival_bowie', 'weapon_knife_butterfly', 'weapon_knife_falchion', 'weapon_knife_flip', 'weapon_knife_gut', 'weapon_knife_tactical', 'weapon_knife_m9_bayonet', 'weapon_bayonet', 'weapon_knife_karambit', 'weapon_knife_push', 'weapon_knife_stiletto', 'weapon_knife_ursus', 'weapon_knife_gypsy_jackknife', 'weapon_knife_widowmaker', 'weapon_knife_css', 'weapon_knife_cord', 'weapon_knife_canis', 'weapon_knife_outdoor', 'weapon_knife_skeleton', 'weapon_hkp2000', 'weapon_usp_silencer', 'weapon_glock', 'weapon_p250', 'weapon_fiveseven', 'weapon_cz75a', 'weapon_tec9', 'weapon_revolver', 'weapon_deagle', 'weapon_elite', 'weapon_galilar', 'weapon_scar20', 'weapon_awp', 'weapon_ak47', 'weapon_famas', 'weapon_m4a1', 'weapon_m4a1_silencer', 'weapon_sg556', 'weapon_ssg08', 'weapon_aug', 'weapon_g3sg1', 'weapon_p90', 'weapon_mac10', 'weapon_ump45', 'weapon_mp7', 'weapon_bizon', 'weapon_mp9', 'weapon_mp5sd', 'weapon_sawedoff', 'weapon_xm1014', 'weapon_nova', 'weapon_mag7', 'weapon_m249', 'weapon_negev', 'weapon_bloodhound_gloves', 'weapon_driver_gloves', 'weapon_hand_wraps', 'weapon_moto_gloves', 'weapon_specialist_gloves', 'weapon_sport_gloves', 'weapon_hydra_gloves', 'weapon_brokenfang_gloves', 'sticker_broken_fang', 'sticker_recoil', 'warhammer_sticker', 'alyx_sticker_capsule', 'halo_capsule', 'shattered_web', 'cs20_capsule', '2019_StarLadder_Berlin_Major', 'crate_sticker_pack_chicken_capsule_lootlist', 'crate_sticker_pack_feral_predators_capsule_lootlist', 'sticker_tournament15', 'skill_groups_capsule', 'sticker_tournament14', 'sticker_tournament13', 'sticker_tournament12', 'sticker_tournament11', 'sticker_tournament10', 'sticker_tournament9', 'sticker_tournament8', 'sticker_tournament7', 'sticker_tournament6', 'sticker_tournament5', 'sticker_tournament4', 'sticker_tournament3', 'crate_sticker_pack_comm2018_01_capsule_lootlist', 'crate_sticker_pack01', 'crate_sticker_pack02', 'crate_sticker_pack_enfu_capsule_lootlist', 'crate_sticker_pack_illuminate_capsule_01_lootlist', 'crate_sticker_pack_illuminate_capsule_02_lootlist', 'crate_sticker_pack_community01', 'crate_sticker_pack_bestiary_capsule_lootlist', 'crate_sticker_pack_slid3_capsule_lootlist', 'crate_sticker_pack_sugarface_capsule_lootlist', 'crate_sticker_pack_pinups_capsule_lootlist', 'crate_sticker_pack_team_roles_capsule_lootlist', 'sticker_other', 'csgo_type_tool', 'csgo_type_spray', 'csgo_type_collectible', 'csgo_type_ticket', 'csgo_tool_gifttag', 'csgo_type_musickit', 'csgo_type_weaponcase', 'csgo_tool_weaponcase_keytag', 'type_customplayer', 'csgo_tool_patch']
@@ -106,11 +84,25 @@ def crawl_goods_by_price_section(category=None):
 
         total_page = root_json['data']['total_page']
         total_count = root_json['data']['total_count']
+
+        # buff有个page_size参数，默认一页请求20个item，最多80
+        # 尝试使用80，能将对buff的访问量减少为原来的1/4。暂时不作为可配置项，硬编码在代码里
+        use_max_page_size = True
+        max_page_size = 80
+        default_page_size = 20
+
+        # 使用80一页后，新的页码
+        if use_max_page_size:
+            total_page = math.ceil(total_page / max_page_size)
+
         log.info('Totally {} items of {} pages to crawl.'.format(total_count, total_page))
         # get each page
         for page_num in range(1, total_page + 1):
             log.info('Page {} / {}'.format(page_num, total_page))
-            page_url = goods_section_page_url(category, page_num)
+            page_url = goods_section_page_url(
+                category, page_num,
+                page_size=max_page_size if use_max_page_size else default_page_size
+            )
             page_json = get_json_dict(page_url, config.BUFF_COOKIE)
             if (page_json is not None) and ('data' in page_json) and ('items' in page_json['data']):
                 # items on this page

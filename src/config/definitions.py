@@ -18,9 +18,11 @@ except IOError:
     print('File {} does not exist. Exit!'.format(CONFIG_PATH))
     exit(1)
 
-# cookie and api
+# cookie and ua
 buff_cookie_simple = SimpleCookie(configr['BASIC']['buff_cookie'])
 BUFF_COOKIE = { i.key:i.value for i in buff_cookie_simple.values() }
+
+USER_AGENT = config['BASIC']['buff_user_agent']
 
 steam_cookie_simple = SimpleCookie(configr['BASIC']['steam_cookie'])
 STEAM_COOKIE = { i.key:i.value for i in steam_cookie_simple.values() }
@@ -99,6 +101,7 @@ class config_export:
 
         self.PROXY = PROXY
         self.BUFF_COOKIE = BUFF_COOKIE
+        self.USER_AGENT = USER_AGENT
         self.STEAM_COOKIE = STEAM_COOKIE
         self.FREQUENCY_INTERVAL_LOW = FREQUENCY_INTERVAL_LOW
         self.FREQUENCY_INTERVAL_HIGH = FREQUENCY_INTERVAL_HIGH
