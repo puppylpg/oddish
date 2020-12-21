@@ -60,15 +60,12 @@ if PROXY:
     proxies["http"] = PROXY
     proxies["https"] = PROXY
 
-def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
-    if exist(url):
-        return fetch(url)
-
+def get_json_dict_raw(url, cookies, proxy = False, times = 1, is_steam_request = 0):
     if times > RETRY_TIMES:
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None
 
-    timer.sleep_awhile(steam_sleep_mode)
+    timer.sleep_awhile(is_steam_request)
     try:
         if proxy and proxies != {}:
             return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
@@ -82,10 +79,10 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, steam_sleep_mode =
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
+def get_json_dict(url, cookies, proxy = False, times = 1, is_steam_request = 0):
     if exist(url):
         return json.loads(fetch(url))
-    json_data = get_json_dict_raw(url, cookies, proxy, times, steam_sleep_mode)
+    json_data = get_json_dict_raw(url, cookies, proxy, times, is_steam_request)
 
     if json_data is None:
         return None
@@ -95,9 +92,6 @@ def get_json_dict(url, cookies, proxy = False, times = 1, steam_sleep_mode = 0):
         return json.loads(json_data)
 
 async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = False, times = 1):
-    if exist(url):
-        return await asyncfetch(url)
-
     if times > RETRY_TIMES:
         log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
         return None

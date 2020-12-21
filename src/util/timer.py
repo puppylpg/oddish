@@ -7,10 +7,10 @@ from src.config.definitions import FREQUENCY_INTERVAL_LOW, FREQUENCY_INTERVAL_HI
 from src.util.logger import log
 
 # 爬buff使用长间隔，steam使用短间隔
-def sleep_awhile(mode = 0):
+def sleep_awhile(is_steam_request = 0):
     low = max(FREQUENCY_INTERVAL_LOW, 2)
     high = max(2, FREQUENCY_INTERVAL_HIGH)
-    if mode == 1:
+    if is_steam_request == 1:
         interval = 1/(random.randint(5, 10))
     else:
         interval = random.randint(low, high)

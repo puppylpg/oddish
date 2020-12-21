@@ -71,8 +71,8 @@ def crawl_item_history_price(index, item, total_price_number):
     steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
 
-    # （同步爬取下引入sleep_mode降低了steam market的爬取间隔）
-    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, steam_sleep_mode = 1)
+    # （同步爬取下引入is_steam_request降低了steam market的爬取间隔）
+    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, is_steam_request = 1)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
