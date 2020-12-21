@@ -118,7 +118,7 @@ def crawl_goods_by_price_section(category=None):
 
         # 使用80一页后，新的页码
         if use_max_page_size:
-            total_page = math.ceil(total_page / max_page_size)
+            total_page = math.ceil(total_count / max_page_size)
 
         log.info('Totally {} items of {} pages to crawl.'.format(total_count, total_page))
         # get each page
