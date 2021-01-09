@@ -42,6 +42,14 @@ If there is no data available, crawl from the website, then analyse data from lo
 ## 视频教程
 最直白的方式，就是再跟着视频一步步来：[oddish纯小白使用教程](https://www.bilibili.com/video/BV1ET4y1w7e1/)
 
+## v4.0.0异步爬取
+从v4.0.0版本开始，从steam获取数据时，换成了python aio（async io），速度极大提升，基本上一分钟以内就能搞定了。
+相应的，要装的aio相关依赖也多了一些。
+
+**如果实在搞不定，建议下载v4.0.0之前的版本。用起来稍微简单点儿，缺点就是非常慢。和v4.0.0相比，二者大概就是一分钟和一小时的差距吧。**
+
+但个人还是建议先尝试一下v4.0.0+版本，毕竟速度快了不是一星半点儿。
+
 ## wiki
 这里还有两篇文章介绍了oddish初期构建和优化思路，如果你想看的话：
 - https://puppylpg.github.io/2019/12/02/python-crawler-buff/
@@ -94,11 +102,17 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 如果不关心过程，只查看分析结果即可。
 
 ## 依赖
-如果只会人肉安装，就安装以下依赖：
+如果只会使用Anaconda人肉安装，就安装以下依赖：
 - python: 3.8.5
 - pandas: 1.1.0
 - numpy: 1.19.1
 - requests: 2.24.0
+- aiohttp: 3.7.3
+- aiofiles: 0.6.0
+- aiohttp-socks: 0.5.5（使用pip）
+
+由于aiohttp-socks没有移植到Anaconda，所以只能使用pip安装。点击Anaconda界面首页的'CMD.exe Promt'下面的Launch按钮，
+会打开一个命令行，输入`pip install aiosocks`即可安装。
 
 如果懂pip，直接用以下命令安装：
 > pip install -r requirements.txt
