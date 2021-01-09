@@ -4,6 +4,10 @@ import asyncio
 from datetime import datetime
 
 import aiohttp
+# import aiosocks
+# from aiosocks.connector import ProxyConnector
+from aiohttp_socks import ProxyConnector
+from src.config.definitions import PROXY
 
 from src.config.urls import steam_price_history_url
 from src.util.logger import log
@@ -55,8 +59,13 @@ async def async_crawl_history_price(csgo_items):
     log.info('Total {} items to get history price.'.format(total_price_number))
 
     tasks = []
-    timeout = aiohttp.ClientTimeout(total=30 * 60)
-    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector = aiohttp.TCPConnector(limit=5), timeout=timeout) as session:
+
+    if PROXY:
+        # use socks
+        connector = ProxyConnector.from_url(PROXY, limit=5)
+    else:
+        connector = aiohttp.TCPConnector(limit=5)
+    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector=connector) as session:
         for index, item in enumerate(csgo_items, start=1):
             try:
                 tasks.append(
