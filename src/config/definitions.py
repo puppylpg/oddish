@@ -38,6 +38,7 @@ FREQUENCY_INTERVAL_HIGH = int(config_behavior['frequency_interval_high'])
 URL_CACHE_HOUR = int(config_behavior['url_cache_hour'])
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
 RETRY_TIMES = int(config_behavior['retry_times'])
+CRAWL_STEAM_ASYNC = config_behavior.getboolean('crawl_steam_async')
 
 # common
 config_common = config['COMMON']

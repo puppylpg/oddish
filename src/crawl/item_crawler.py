@@ -1,8 +1,10 @@
 import re
+import asyncio
 import math
+
 # from tqdm import tqdm
 
-from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL
+from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL, CRAWL_STEAM_ASYNC
 from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
 from src.crawl import history_price_crawler
 from src.data.item import Item
@@ -54,9 +56,14 @@ def csgo_all_categories():
     return categories
 
 
-def enrich_item_with_price_history(csgo_items):
+def enrich_item_with_price_history(csgo_items, crawl_steam_async = True):
     # crawl price for all items
-    history_price_crawler.crawl_history_price(csgo_items)
+    if crawl_steam_async == True:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        asyncio.run(
+            history_price_crawler.async_crawl_history_price(csgo_items))
+    else:
+        history_price_crawler.crawl_history_price(csgo_items)
     return csgo_items
 
 
@@ -77,7 +84,7 @@ def crawl_website():
         # crawl by price section without category
         csgo_items.extend(crawl_goods_by_price_section(None))
 
-    enrich_item_with_price_history(csgo_items)
+    enrich_item_with_price_history(csgo_items, CRAWL_STEAM_ASYNC)
     return persist_util.tabulate(csgo_items)
 
 
