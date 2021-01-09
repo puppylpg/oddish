@@ -56,7 +56,7 @@ def fetch(url):
 async def asyncfetch(url):
     urlid = url_id(url)
     log.info('Successful attempt to fetch from {}'.format(urlid))
-    with aiofiles.open(os.path.join(cache_root, urlid), "r", encoding='utf-8') as f:
+    async with aiofiles.open(os.path.join(cache_root, urlid), "r", encoding='utf-8') as f:
         return await f.read()
 
 def store(url, data):

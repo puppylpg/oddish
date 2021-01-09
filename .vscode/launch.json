@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "module": "src",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "subProcess": true
         }
     ]
 }
