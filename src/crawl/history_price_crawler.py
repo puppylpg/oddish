@@ -4,6 +4,10 @@ import asyncio
 from datetime import datetime
 
 import aiohttp
+# import aiosocks
+# from aiosocks.connector import ProxyConnector
+from aiohttp_socks import ProxyConnector
+from src.config.definitions import PROXY
 
 from src.config.urls import steam_price_history_url
 from src.util.logger import log
@@ -16,7 +20,7 @@ async def async_crawl_item_history_price(index, item, total_price_number, sessio
     steam_price_url = steam_price_history_url(item)
     log.info('prepare to GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
 
-    steam_history_prices = await async_get_json_dict(steam_price_url, steam_cookies, session)
+    steam_history_prices = await async_get_json_dict(steam_price_url, steam_cookies, session, proxy=True)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
@@ -45,7 +49,13 @@ async def async_crawl_history_price(csgo_items):
     log.info('Total {} items to get history price.'.format(total_price_number))
 
     tasks = []
-    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector = aiohttp.TCPConnector(limit=5)) as session:
+
+    if PROXY:
+        # use socks
+        connector = ProxyConnector.from_url(PROXY, limit=5)
+    else:
+        connector = aiohttp.TCPConnector(limit=5)
+    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector=connector) as session:
         for index, item in enumerate(csgo_items, start=1):
             try:
                 tasks.append(
@@ -71,8 +81,8 @@ def crawl_item_history_price(index, item, total_price_number):
     steam_price_url = steam_price_history_url(item)
     log.info('GET steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
 
-    # （同步爬取下引入sleep_mode降低了steam market的爬取间隔）
-    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, steam_sleep_mode = 1)
+    # （同步爬取下引入is_steam_request降低了steam market的爬取间隔）
+    steam_history_prices = get_json_dict(steam_price_url, steam_cookies, is_steam_request = 1)
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
