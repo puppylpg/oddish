@@ -8,8 +8,8 @@ from src.util.logger import log
 
 # 爬buff使用长间隔，steam使用短间隔
 def sleep_awhile(is_steam_request = 0):
-    low = max(FREQUENCY_INTERVAL_LOW, 2)
-    high = max(2, FREQUENCY_INTERVAL_HIGH)
+    low = max(FREQUENCY_INTERVAL_LOW, 10)
+    high = max(10, FREQUENCY_INTERVAL_HIGH)
     if is_steam_request == 1:
         interval = 1/(random.randint(5, 10))
     else:
