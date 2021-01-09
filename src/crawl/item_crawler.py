@@ -1,7 +1,6 @@
 import re
 import asyncio
 import math
-
 # from tqdm import tqdm
 
 from src.config.definitions import CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, BUFF_COOKIE, FORCE_CRAWL, CRAWL_STEAM_ASYNC
@@ -58,7 +57,7 @@ def csgo_all_categories():
 
 def enrich_item_with_price_history(csgo_items, crawl_steam_async = True):
     # crawl price for all items
-    if crawl_steam_async == True:
+    if crawl_mode == True:
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.run(
             history_price_crawler.async_crawl_history_price(csgo_items))
@@ -119,7 +118,7 @@ def crawl_goods_by_price_section(category=None):
 
         # 使用80一页后，新的页码
         if use_max_page_size:
-            total_page = math.ceil(total_page / max_page_size)
+            total_page = math.ceil(total_count / max_page_size)
 
         log.info('Totally {} items of {} pages to crawl.'.format(total_count, total_page))
         # get each page
