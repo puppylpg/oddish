@@ -117,10 +117,6 @@ async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = 
     return data
 
 async def async_get_json_dict(url, cookies, session, proxy = False, times = 1):
-    # TODO: 从cache获取部分数据后，aiohttp_socks请求会挂掉： RuntimeError: Session is closed，从一开始就请求steam就没问题
-    # TODO: 以上问题还会导致最终的table都是NaN
-    # TODO 复现方式： 先清空cache跑一遍，再随机删掉chche里的某条目，再跑一遍，就能复现
-    # TODO 鉴于以上两个问题，先把从本地cache获取数据的功能关了。反正aio很快，也不是很需要cache
     if await asyncexist(url):
         return json.loads(await asyncfetch(url))
     json_data = await async_get_json_dict_raw(url, cookies, session, proxy, times)
