@@ -1,4 +1,4 @@
-from asyncio.tasks import gather
+from src.data.item import Item
 import traceback
 import asyncio
 from datetime import datetime
@@ -24,7 +24,15 @@ async def async_crawl_item_history_price(index, item, total_price_number, sessio
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
-        raw_price_history = steam_history_prices['prices']
+        days = key_existence_check(item, history_prices, steam_history_prices)
+
+        log.info('got steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
+        log.info('totally {} pieces of price history in {} days for {}\n'.format(len(history_prices), days, item.name))
+
+def key_existence_check(item:Item, history_prices, steam_history_prices):
+    raw_price_history = steam_history_prices['prices']
+    days = 0
+    try:
         if len(raw_price_history) > 0:
             days = min((datetime.today().date() - datetime.strptime(raw_price_history[0][0], '%b %d %Y %H: +0').date()).days, 7)
         else:
@@ -35,13 +43,15 @@ async def async_crawl_item_history_price(index, item, total_price_number, sessio
                     history_prices.append(float(pair[1]))
             if (datetime.today().date() - datetime.strptime(pair[0], '%b %d %Y %H: +0').date()).days > days:
                 break
-
-        # set history price if exist
-        if len(history_prices) != 0:
-            item.set_history_prices(history_prices, days)
-
-        log.info('got steam history price {}/{} for ({}): {}'.format(index, total_price_number, item.name, steam_price_url))
-        log.info('totally {} pieces of price history in {} days for {}\n'.format(len(history_prices), days, item.name))
+    except Exception as e:
+        log.error(traceback.format_exc())
+        log.error(raw_price_history)
+        log.error(steam_history_prices)
+    
+    # set history price if exist
+    if len(history_prices) != 0:
+        item.set_history_prices(history_prices, days)
+    return days
 
 
 async def async_crawl_history_price(csgo_items):
@@ -50,12 +60,13 @@ async def async_crawl_history_price(csgo_items):
 
     tasks = []
 
+    timeout = aiohttp.ClientTimeout(total=30 * 60)
     if PROXY:
         # use socks
         connector = ProxyConnector.from_url(PROXY, limit=5)
     else:
         connector = aiohttp.TCPConnector(limit=5)
-    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector=connector) as session:
+    async with aiohttp.ClientSession(cookies=steam_cookies, headers=get_headers(), connector=connector,timeout=timeout) as session:
         for index, item in enumerate(csgo_items, start=1):
             try:
                 tasks.append(
@@ -86,21 +97,7 @@ def crawl_item_history_price(index, item, total_price_number):
 
     # key existence check
     if (steam_history_prices is not None) and ('prices' in steam_history_prices):
-        raw_price_history = steam_history_prices['prices']
-        if len(raw_price_history) > 0:
-            days = min((datetime.today().date() - datetime.strptime(raw_price_history[0][0], '%b %d %Y %H: +0').date()).days, 7)
-        else:
-            days = 0
-        for pair in reversed(raw_price_history):
-            if len(pair) == 3:
-                for i in range(0, int(pair[2])):
-                    history_prices.append(float(pair[1]))
-            if (datetime.today().date() - datetime.strptime(pair[0], '%b %d %Y %H: +0').date()).days > days:
-                break
-
-        # set history price if exist
-        if len(history_prices) != 0:
-            item.set_history_prices(history_prices, days)
+        days = key_existence_check(item, history_prices, steam_history_prices)
 
         log.info('totally {} pieces of price history in {} days for {}\n'.format(len(history_prices), days, item.name))
 
