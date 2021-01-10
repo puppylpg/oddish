@@ -45,8 +45,8 @@ def key_existence_check(item:Item, history_prices, steam_history_prices):
                 break
     except Exception as e:
         log.error(traceback.format_exc())
-        log.error(raw_price_history)
-        log.error(steam_history_prices)
+        log.error('raw_price_history: {}'.format(raw_price_history))
+        log.error('steam_history_prices: {}'.format(steam_history_prices))
     
     # set history price if exist
     if len(history_prices) != 0:
@@ -60,6 +60,7 @@ async def async_crawl_history_price(csgo_items):
 
     tasks = []
 
+    # 30min
     timeout = aiohttp.ClientTimeout(total=30 * 60)
     if PROXY:
         # use socks
