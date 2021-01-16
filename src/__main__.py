@@ -1,3 +1,4 @@
+import sys
 import datetime
 
 from src.crawl import item_crawler
@@ -5,6 +6,9 @@ from src.util import suggestion
 from src.util.logger import log
 
 if __name__ == '__main__':
+
+    if sys.version_info[:2] == (3, 7):
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
     # start
     start = datetime.datetime.now()
