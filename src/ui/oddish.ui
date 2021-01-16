@@ -230,6 +230,20 @@
          <item>
           <widget class="QTextEdit" name="logger"/>
          </item>
+         <item>
+          <widget class="QProgressBar" name="buffProcessBar">
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="steamProcessBar">
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

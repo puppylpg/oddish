@@ -27,6 +27,8 @@ USER_AGENT = config['BASIC']['buff_user_agent']
 steam_cookie_simple = SimpleCookie(configr['BASIC']['steam_cookie'])
 STEAM_COOKIE = { i.key:i.value for i in steam_cookie_simple.values() }
 
+BUFF_USER_AGENT = configr["buff_user_agent"]
+
 # proxy
 PROXY = configr['BASIC']['proxy']
 
@@ -83,6 +85,7 @@ CACHE_DIR = 'cache'
 
 class config_export:
     def __init__(self):
+        self.USER_AGENT = BUFF_USER_AGENT
         self.CONFIG_DIR = CONFIG_DIR
         self.CONFIG_FILE_NAME = CONFIG_FILE_NAME
         self.CONFIG_PATH = CONFIG_PATH
