@@ -141,6 +141,6 @@
 * 功能
     - aio http session使用自定义timeout，可以和cache兼容使用（默认的timeout为什么不行，原因不明……）；
 
-## 4.1.1(2021-01-11)
+## 4.1.1(2021-01-16)
 * bugfix
     - 修复(workaround)win下结束爬取后报错的问题
