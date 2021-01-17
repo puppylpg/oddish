@@ -50,7 +50,7 @@ def goods_section_root_url(category):
 def goods_section_page_url(category, page_num, page_size=20):
     # buff support page_size parameter, but the max value can only be 80
     base = BUFF_GOODS + 'game=csgo&page_num={}&sort_by=price.desc&min_price={}&max_price={}&page_size={}' \
-        .format(page_num, CRAWL_MIN_PRICE_ITEM, CRAWL_MAX_PRICE_ITEM, page_size)
+        .format(page_num, config.CRAWL_MIN_PRICE_ITEM, config.CRAWL_MAX_PRICE_ITEM, page_size)
     if category is not None:
         base += '&category={}'.format(category)
 

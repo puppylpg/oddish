@@ -22,12 +22,12 @@ except IOError:
 buff_cookie_simple = SimpleCookie(configr['BASIC']['buff_cookie'])
 BUFF_COOKIE = { i.key:i.value for i in buff_cookie_simple.values() }
 
-USER_AGENT = config['BASIC']['buff_user_agent']
+USER_AGENT = configr['BASIC']['buff_user_agent']
 
 steam_cookie_simple = SimpleCookie(configr['BASIC']['steam_cookie'])
 STEAM_COOKIE = { i.key:i.value for i in steam_cookie_simple.values() }
 
-BUFF_USER_AGENT = configr["buff_user_agent"]
+BUFF_USER_AGENT = configr['BASIC']["buff_user_agent"]
 
 # proxy
 PROXY = configr['BASIC']['proxy']
@@ -39,6 +39,7 @@ FREQUENCY_INTERVAL_HIGH = int(config_behavior['frequency_interval_high'])
 URL_CACHE_HOUR = int(config_behavior['url_cache_hour'])
 FORCE_CRAWL = config_behavior.getboolean('force_crawl')
 RETRY_TIMES = int(config_behavior['retry_times'])
+CRAWL_STEAM_ASYNC = config_behavior.getboolean('crawl_steam_async')
 
 # common
 config_common = configr['COMMON']
@@ -111,6 +112,7 @@ class config_export:
         self.URL_CACHE_HOUR = URL_CACHE_HOUR
         self.FORCE_CRAWL = FORCE_CRAWL
         self.RETRY_TIMES = RETRY_TIMES
+        self.CRAWL_STEAM_ASYNC = CRAWL_STEAM_ASYNC
         self.STEAM_SELL_TAX = STEAM_SELL_TAX
         self.CRAWL_MIN_PRICE_ITEM = CRAWL_MIN_PRICE_ITEM
         self.CRAWL_MAX_PRICE_ITEM = CRAWL_MAX_PRICE_ITEM

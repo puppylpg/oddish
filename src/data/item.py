@@ -32,19 +32,22 @@ class Item:
         self.average_sold_price_after_tax = self.average_sold_price * (1 - config.STEAM_SELL_TAX)
         self.gap = self.average_sold_price_after_tax - self.price
         self.gap_percent = self.gap * 1.0 / self.price
+        self.discount_percent = self.price / self.average_sold_price_after_tax
 
     def detail(self):
-        return "{}: {}(steam .25 percentile sold price after tax) - {}(buff) = {}(beyond {:.2%}). " \
-               "Sold {} items in {} days.\n steam url:{}" \
+        return "{}: {}(steam .25 percentile sold price after tax) - {}(buff) = {}(beyond {:.2%}, {:.2%}). " \
+               "Sold {} items in {} days.\n steam url:{}\n buff url: https://buff.163.com/market/goods?goods_id={}&from=market#tab=selling" \
             .format(
             self.name,
             self.average_sold_price_after_tax,
             self.price,
             self.gap,
             self.gap_percent,
+            self.discount_percent,
             self.history_sold,
             self.history_days,
-            self.steam_url
+            self.steam_url,
+            self.id
         )
 
     def to_dict(self):
