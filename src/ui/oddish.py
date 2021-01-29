@@ -84,7 +84,7 @@ class browserc(QtWidgets.QWidget):
 
 class oddish(Ui_MainWindow):
     steam_cookie = { 'sessionid': "" , 'steamLoginSecure': ""}
-    buff_cookie = { 'session': "" }
+    buff_cookie = { 'session': "", 'csrf_token': "", '_ntes_nnid': "", '_ntes_nuid': "", 'usertrack': "" }
     def __init__(self, Dialog):
         super().setupUi(Dialog)
         MainWindow = QtWidgets.QMainWindow()
