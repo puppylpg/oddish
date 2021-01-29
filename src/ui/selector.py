@@ -4,6 +4,7 @@ import functools
 from src.crawl.item_crawler import csgo_all_categories
 from src.util.category import final_categories
 from src.config.definitions import config
+from src.util.logger import gui_out
 
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSvg
 
@@ -35,9 +36,11 @@ class selector(QtWidgets.QWidget):
 
     def __init__(self, parent = None):
         super(selector, self).__init__(parent)
-        self.setWindowTitle("Selector")
+        self.setWindowTitle("类型限定")
+        gui_out.enabled = False
         categories = csgo_all_categories()
         self.cur_category = final_categories(categories)
+        gui_out.enabled = True
         config.CATEGORY_WHITE_LIST = self.cur_category  # when open this, black list is abandoned
 
         grid_layout = QtWidgets.QGridLayout()

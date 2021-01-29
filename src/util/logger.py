@@ -10,10 +10,13 @@ formatter = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
 
 class gui_stream(QObject):
     text_signal = pyqtSignal(str)
+    enabled = True
+
     def __init__(self):
         super().__init__()
     def write(self, text):
-        self.text_signal.emit(text)
+        if self.enabled:
+            self.text_signal.emit(text)
     def flush(self):
         pass
 gui_out = gui_stream()

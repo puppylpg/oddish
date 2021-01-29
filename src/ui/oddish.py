@@ -44,7 +44,7 @@ class proxy_checker(QThread):
     def run(self):
         config.PROXY = self.proxy
         flag = True
-        if get_json_dict_raw("https://steamcommunity.com/market/", {}, True):
+        if get_json_dict_raw("https://steamcommunity.com/market/", {}, True, 2, True):
             self._signal.emit(True)
         else:
             self._signal.emit(False)
@@ -60,6 +60,8 @@ class browserc(QtWidgets.QWidget):
         layout.addWidget(self.browser)
         self.setLayout(layout)
 
+    def set_title(self, title):
+        self.setWindowTitle(title)
     def get_cookie(self, url, demand, textbox):
         url = QtCore.QUrl(url)
         self.browser.load(url)
@@ -77,6 +79,7 @@ class browserc(QtWidgets.QWidget):
             self.hide()
 
         self.browser.page().profile().cookieStore().cookieAdded.connect(check_cookie)
+        self.browser.titleChanged.connect(self.set_title)
         self.showMaximized()
 
 class oddish(Ui_MainWindow):
@@ -89,6 +92,8 @@ class oddish(Ui_MainWindow):
         self.proxyEditor.setPlainText(config.PROXY)
         self.steamCookie.setPlainText(SimpleCookie(config.STEAM_COOKIE).output(header = '', sep=';'))
         self.buffCookie.setPlainText(SimpleCookie(config.BUFF_COOKIE).output(header = '', sep=';'))
+        self.priceMin.setValue(config.CRAWL_MIN_PRICE_ITEM)
+        self.priceMax.setValue(config.CRAWL_MAX_PRICE_ITEM)
 
         gui_out.text_signal.connect(self.log_output)
         Dialog.closeEvent = self.on_quit
@@ -103,6 +108,7 @@ class oddish(Ui_MainWindow):
         self.priceMax.textChanged.connect(self.change_price_range)
         self.typeRestrict.clicked.connect(self.select)
         self.browser = browserc()
+        self.check_proxy()
 
     def change_price_range(self):
         config.CRAWL_MIN_PRICE_ITEM = self.priceMin.value()

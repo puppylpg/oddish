@@ -124,6 +124,10 @@ class config_export:
         configr['BASIC']['proxy'] = self.PROXY
         configr['BASIC']['buff_cookie'] = SimpleCookie(self.BUFF_COOKIE).output(header = '', sep=';')
         configr['BASIC']['steam_cookie'] = SimpleCookie(self.STEAM_COOKIE).output(header = '', sep=';')
+        configr['FILTER']['crawl_min_price_item'] = config.CRAWL_MIN_PRICE_ITEM
+        configr['FILTER']['crawl_max_price_item'] = config.CRAWL_MAX_PRICE_ITEM
+        configr['FILTER']['category_black_list'] = json.dumps(config.CATEGORY_BLACK_LIST)
+        configr['FILTER']['category_white_list'] = json.dumps(config.CATEGORY_WHITE_LIST)
         with open(os.path.join(os.getcwd(), CONFIG_DIR, CONFIG_FILE_NAME), "w+") as f:
             configr.write(f)
 

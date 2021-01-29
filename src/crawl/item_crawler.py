@@ -45,28 +45,6 @@ def enrich_item_with_price_history(csgo_items, crawl_steam_async=True):
         history_price_crawler.crawl_history_price(csgo_items)
     return csgo_items
 
-
-def crawl_website():
-    csgo_items = []
-
-    raw_categories = csgo_all_categories()
-
-    categories = final_categories(raw_categories)
-
-    # crawl by categories and price section
-    if len(raw_categories) != len(categories):
-        total_category = len(categories)
-        for index, category in enumerate(categories, start=1):
-            csgo_items.extend(crawl_goods_by_price_section(category))
-            log.info('GET category {}/{} for ({}).'.format(index, total_category, category))
-    else:
-        # crawl by price section without category
-        csgo_items.extend(crawl_goods_by_price_section(None))
-
-    enrich_item_with_price_history(csgo_items, config.CRAWL_STEAM_ASYNC)
-    return persist.tabulate(csgo_items)
-
-
 def crawl_goods_by_price_section(category=None):
     root_url = goods_section_root_url(category)
     log.info('GET: {}'.format(root_url))
@@ -125,5 +103,21 @@ def crawl_goods_by_price_section(category=None):
 
 def crawl():
     log.info("Force crawling? {}".format(config.FORCE_CRAWL))
+    csgo_items = []
 
-    return crawl_website()
+    raw_categories = csgo_all_categories()
+
+    categories = final_categories(raw_categories)
+
+    # crawl by categories and price section
+    if len(raw_categories) != len(categories):
+        total_category = len(categories)
+        for index, category in enumerate(categories, start=1):
+            csgo_items.extend(crawl_goods_by_price_section(category))
+            log.info('GET category {}/{} for ({}).'.format(index, total_category, category))
+    else:
+        # crawl by price section without category
+        csgo_items.extend(crawl_goods_by_price_section(None))
+
+    enrich_item_with_price_history(csgo_items, config.CRAWL_STEAM_ASYNC)
+    return persist.tabulate(csgo_items)

@@ -35,7 +35,7 @@
       <item>
        <widget class="QGroupBox" name="settings">
         <property name="title">
-         <string>Settings</string>
+         <string>设置</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
@@ -224,25 +224,11 @@
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
-         <string>Output</string>
+         <string>输出</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <widget class="QTextEdit" name="logger"/>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="buffProcessBar">
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="steamProcessBar">
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
