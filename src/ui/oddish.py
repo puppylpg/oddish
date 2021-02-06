@@ -27,7 +27,7 @@ class crawler(QThread):
 
         table = item_crawler.crawl()
 
-        if (table is not None) and (not table.empty):
+        if (table is not None) and len(table) > 0:
             suggestion.suggest(table)
         else:
             log.error('No correct csgo items remain. Please check if conditions are to strict.')

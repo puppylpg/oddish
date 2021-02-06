@@ -1,3 +1,4 @@
+import csv
 import json
 import traceback
 import requests
@@ -10,15 +11,17 @@ from src.util import timer
 from src.util.logger import log
 from src.util.cache import fetch, store, exist, asyncexist, asyncfetch, asyncstore
 
-import pandas as pd
-
 # get user-agent database
-csv = pd.read_csv('config/reference/ua.csv')
-ua = csv.ua
+f = open('config/reference/ua.csv')
+csv = csv.DictReader(f)
+ua = []
+for k in csv:
+    ua.append(k['ua'])
+f.close()
 
 # get user-agent
 def get_random_ua():
-    return ua[random.randint(0, ua.size)]
+    return ua[random.randint(0, len(ua))]
 
 def get_ua():
     if config.USER_AGENT:

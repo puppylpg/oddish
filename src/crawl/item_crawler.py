@@ -7,7 +7,6 @@ import asyncio
 from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
 from src.crawl import history_price_crawler
 from src.data.item import Item
-from src.util import persist
 from src.util.requester import get_json_dict
 from src.util.category import final_categories
 from src.util.logger import log
@@ -120,4 +119,4 @@ def crawl():
         csgo_items.extend(crawl_goods_by_price_section(None))
 
     enrich_item_with_price_history(csgo_items, config.CRAWL_STEAM_ASYNC)
-    return persist.tabulate(csgo_items)
+    return csgo_items
