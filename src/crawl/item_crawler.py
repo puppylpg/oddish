@@ -1,17 +1,57 @@
 import re
 import math
+import time
+import asyncio
+import aiohttp
+import traceback
+from aiohttp_socks import ProxyConnector
+from datetime import datetime
 
 from src.config.definitions import config
-import asyncio
-
-from src.config.urls import goods_section_root_url, goods_root_url, goods_section_page_url
-from src.crawl import history_price_crawler
+from src.config.urls import steam_price_history_url, goods_section_root_url, goods_root_url, goods_section_page_url
 from src.data.item import Item
-from src.util.requester import get_json_dict
+from src.util.requester import async_get_json_dict, get_headers, get_json_dict
 from src.util.category import final_categories
 from src.util.logger import log
 from src.util import timer
 
+async def async_crawl_item_history_price(index, item, session):
+    history_prices = []
+
+    steam_price_url = steam_price_history_url(item)
+    log.info('prepare to GET steam history price {} for ({}): {}'.format(index, item.name, steam_price_url))
+
+    steam_history_prices = await async_get_json_dict(steam_price_url, config.STEAM_COOKIE, session, proxy=True)
+
+    # key existence check
+    if (steam_history_prices is not None) and ('prices' in steam_history_prices):
+        days = key_existence_check(item, history_prices, steam_history_prices)
+
+        log.info('got steam history price {} for {}({} pieces of price history): {}'.format(index, item.name, len(history_prices), steam_price_url))
+
+def key_existence_check(item:Item, history_prices, steam_history_prices):
+    raw_price_history = steam_history_prices['prices']
+    days = 0
+    try:
+        if len(raw_price_history) > 0:
+            days = min((datetime.today().date() - datetime.strptime(raw_price_history[0][0], '%b %d %Y %H: +0').date()).days, 7)
+        else:
+            days = 0
+        for pair in reversed(raw_price_history):
+            if len(pair) == 3:
+                for i in range(0, int(pair[2])):
+                    history_prices.append(float(pair[1]))
+            if (datetime.today().date() - datetime.strptime(pair[0], '%b %d %Y %H: +0').date()).days > days:
+                break
+    except Exception as e:
+        log.error(traceback.format_exc())
+        log.error('raw_price_history: {}'.format(raw_price_history))
+        log.error('steam_history_prices: {}'.format(steam_history_prices))
+
+    # set history price if exist
+    if len(history_prices) != 0:
+        item.set_history_prices(history_prices, days)
+    return days
 
 def collect_item(item):
     buff_id = item['id']
@@ -44,15 +84,25 @@ def enrich_item_with_price_history(csgo_items, crawl_steam_async=True):
         history_price_crawler.crawl_history_price(csgo_items)
     return csgo_items
 
-def crawl_goods_by_price_section(category=None):
+async def crawl_goods_by_price_section(category=None):
     root_url = goods_section_root_url(category)
     log.info('GET: {}'.format(root_url))
 
     root_json = get_json_dict(root_url, config.BUFF_COOKIE)
-    
+    timer.sleep_awhile(0)
+    if root_json is None:
+        return []
     category_items = []
 
-    if root_json is not None:
+    tasks = []
+    timeout = aiohttp.ClientTimeout(total=30 * 60)
+    if config.PROXY:
+        # use socks
+        connector = ProxyConnector.from_url(config.PROXY, limit=5)
+    else:
+        connector = aiohttp.TCPConnector(limit=5)
+
+    async with aiohttp.ClientSession(cookies=config.STEAM_COOKIE, headers=get_headers(), connector=connector,timeout=timeout) as session:
         if 'data' not in root_json:
             log.error('Error happens:')
             log.error(root_json)
@@ -94,9 +144,20 @@ def crawl_goods_by_price_section(category=None):
                     csgo_item = collect_item(item)
                     if csgo_item is not None:
                         category_items.append(csgo_item)
+                        try:
+                            tasks.append(async_crawl_item_history_price(len(category_items), category_items[-1], session))
+                        except Exception as e:
+                            log.error(traceback.format_exc())
+
+                stamp = time.time()
+                try:
+                    await asyncio.gather(*tasks)
+                except Exception as e:
+                    log.error(traceback.format_exc())
+                tasks = []
+                timer.sleep_awhile(0, time.time() - stamp)
             else:
                 log.warn("No specific data for page {}. Skip this page.".format(page_url))
-
     return category_items
 
 
@@ -112,11 +173,10 @@ def crawl():
     if len(raw_categories) != len(categories):
         total_category = len(categories)
         for index, category in enumerate(categories, start=1):
-            csgo_items.extend(crawl_goods_by_price_section(category))
+            csgo_items.extend(asyncio.run(crawl_goods_by_price_section(category)))
             log.info('GET category {}/{} for ({}).'.format(index, total_category, category))
     else:
         # crawl by price section without category
-        csgo_items.extend(crawl_goods_by_price_section(None))
+        csgo_items.extend(asyncio.run(crawl_goods_by_price_section(None)))
 
-    enrich_item_with_price_history(csgo_items, config.CRAWL_STEAM_ASYNC)
     return csgo_items
