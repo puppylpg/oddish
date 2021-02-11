@@ -6,3 +6,6 @@ database
 log
 suggestion
 cache
+
+package/build
+package/dist

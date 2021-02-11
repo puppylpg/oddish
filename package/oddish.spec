@@ -1,10 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
+import logging
 
 block_cipher = None
+
+logger = logging.getLogger("pyinstaller")
 
 f = open("../oddish.py", "w")
 f.write("import src")
 f.close()
+
+logger.info('pyuic5 ../src/ui/oddish.ui -o ../src/ui/oddish_base.py')
+os.system('pyuic5 ../src/ui/oddish.ui -o ../src/ui/oddish_base.py')
+
+logger.info('cd ../src/ui/res/&&pyrcc5 res.qrc -o ../res_rc.py')
+os.system('cd ../src/ui/res/&&pyrcc5 res.qrc -o ../res_rc.py')
 
 a = Analysis(['../oddish.py'],
              pathex=[''],
