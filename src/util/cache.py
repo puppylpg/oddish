@@ -14,7 +14,7 @@ if not os.path.exists(cache_root):
 def vaild_json(js):
     try:
         json_object = json.loads(js)
-        if (json_object = []) or ('error' in root_json):
+        if (json_object == []) or ('error' in root_json):
             return False
     except ValueError as e:
         return False
