@@ -8,20 +8,16 @@ if config.CONSOLE:
     from src.util import suggestion
     from src.util.logger import log
 
-    # start
     start = datetime.datetime.now()
     log.info("Start Time: {}".format(start))
 
     table = item_crawler.crawl()
 
-    # table may be empty if no data is received due to timeout
-    if (table is not None) and (not table.empty):
-        # suggestion
+    if (table is not None) and len(table) > 0:
         suggestion.suggest(table)
     else:
         log.error('No correct csgo items remain. Please check if conditions are to strict.')
 
-    # end
     end = datetime.datetime.now()
     log.info("END: {}. TIME USED: {}.".format(end, end - start))
 else:
