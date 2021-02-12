@@ -14,7 +14,7 @@ from src.ui.selector import selector
 from src.util.requester import get_json_dict_raw
 from src.crawl import item_crawler
 from src.util import suggestion
-from src.util.logger import gui_out, log
+from src.util.logger import out, log
 
 class crawler(QThread):
     _signal =pyqtSignal()

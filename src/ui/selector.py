@@ -4,7 +4,7 @@ import functools
 from src.crawl.item_crawler import csgo_all_categories
 from src.util.category import final_categories
 from src.config.definitions import config
-from src.util.logger import gui_out
+from src.util.logger import out
 
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSvg
 

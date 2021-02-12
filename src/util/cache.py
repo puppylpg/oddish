@@ -11,9 +11,11 @@ cache_root = os.path.join(os.getcwd(), config.CACHE_DIR)
 if not os.path.exists(cache_root):
     os.mkdir(cache_root)
 
-def is_json(js):
+def vaild_json(js):
     try:
         json_object = json.loads(js)
+        if (json_object = []) or ('error' in root_json):
+            return False
     except ValueError as e:
         return False
     return True
@@ -29,7 +31,7 @@ def exist(url):
     if not os.path.exists(os.path.join(cache_root,urlid)):
         return False
     with open(os.path.join(cache_root, urlid), "r", encoding='utf-8') as f:
-        if not is_json(f.read()):
+        if not vaild_json(f.read()):
             return False
     mtime = os.path.getmtime(os.path.join(cache_root,urlid))
     return (time.time() - mtime) / 3600 <= config.URL_CACHE_HOUR
@@ -42,7 +44,7 @@ async def asyncexist(url):
     if not os.path.exists(os.path.join(cache_root,urlid)):
         return False
     async with aiofiles.open(os.path.join(cache_root, urlid), "r", encoding='utf-8') as f:
-        if not is_json(await f.read()):
+        if not vaild_json(await f.read()):
             return False
     mtime = os.path.getmtime(os.path.join(cache_root,urlid))
     return (time.time() - mtime) / 3600 <= config.URL_CACHE_HOUR
