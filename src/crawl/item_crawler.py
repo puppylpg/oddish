@@ -13,6 +13,7 @@ from src.data.item import Item
 from src.util.requester import async_get_json_dict, get_headers, get_json_dict
 from src.util.category import final_categories
 from src.util.logger import log
+from src.util.cache import exist
 from src.util import timer
 
 async def async_crawl_item_history_price(index, item, session):
@@ -89,7 +90,8 @@ async def crawl_goods_by_price_section(category=None):
     log.info('GET: {}'.format(root_url))
 
     root_json = get_json_dict(root_url, config.BUFF_COOKIE)
-    timer.sleep_awhile(0)
+    if not exist(root_url):
+        timer.sleep_awhile(0)
     if root_json is None:
         return []
     category_items = []
@@ -155,7 +157,8 @@ async def crawl_goods_by_price_section(category=None):
                 except Exception as e:
                     log.error(traceback.format_exc())
                 tasks = []
-                timer.sleep_awhile(0, time.time() - stamp)
+                if not exist(page_url):
+                    timer.sleep_awhile(0, time.time() - stamp)
             else:
                 log.warn("No specific data for page {}. Skip this page.".format(page_url))
     return category_items
