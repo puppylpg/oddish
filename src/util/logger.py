@@ -1,31 +1,36 @@
 import logging
 import os
 import sys
-
-from PyQt5 import QtGui
-from PyQt5.QtCore import QObject, pyqtSignal
 from src.config.definitions import config
+
+if not config.CONSOLE:
+    from PyQt5 import QtGui
+    from PyQt5.QtCore import QObject, pyqtSignal
+    from src.config.definitions import config
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
 
-class gui_stream(QObject):
-    text_signal = pyqtSignal(str)
-    enabled = True
+if not config.CONSOLE:
+    class gui_stream(QObject):
+        text_signal = pyqtSignal(str)
+        enabled = True
 
-    def __init__(self):
-        super().__init__()
-    def write(self, text):
-        if self.enabled:
-            self.text_signal.emit(text)
-    def flush(self):
-        pass
-gui_out = gui_stream()
+        def __init__(self):
+            super().__init__()
+        def write(self, text):
+            if self.enabled:
+                self.text_signal.emit(text)
+        def flush(self):
+            pass
+    out = gui_stream()
+else:
+    out = sys.stdout
 
 def get_logger(name, log_file, level = logging.DEBUG, format=True):
     """To setup as many loggers as you want"""
 
     # output to both console and file
-    console_handler = logging.StreamHandler(gui_out)
+    console_handler = logging.StreamHandler(out)
     file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
 
     if format:

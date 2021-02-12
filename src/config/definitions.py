@@ -23,6 +23,7 @@ buff_cookie_simple = SimpleCookie(configr['BASIC']['buff_cookie'])
 BUFF_COOKIE = { i.key:i.value for i in buff_cookie_simple.values() }
 
 USER_AGENT = configr['BASIC']['buff_user_agent']
+CONSOLE = configr['BASIC'].getboolean('console')
 
 steam_cookie_simple = SimpleCookie(configr['BASIC']['steam_cookie'])
 STEAM_COOKIE = { i.key:i.value for i in steam_cookie_simple.values() }
@@ -85,6 +86,7 @@ CACHE_DIR = 'cache'
 
 class config_export:
     def __init__(self):
+        self.CONSOLE = CONSOLE
         self.USER_AGENT = BUFF_USER_AGENT
         self.CONFIG_DIR = CONFIG_DIR
         self.CONFIG_FILE_NAME = CONFIG_FILE_NAME
