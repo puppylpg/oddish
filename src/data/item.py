@@ -23,6 +23,7 @@ class Item:
         self.history_days = 0
         self.average_sold_price = 0
         self.average_sold_price_after_tax = 0
+        self.discount_percent = 1
 
     def set_history_prices(self, prices, days):
         self.history_prices = prices
