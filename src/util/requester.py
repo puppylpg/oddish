@@ -31,7 +31,7 @@ def get_ua():
 
 def get_headers():
     target_ua = get_ua()
-    log.info('use User-Agent: {}'.format(target_ua))
+    # log.info('use User-Agent: {}'.format(target_ua))
     return {
         'User-Agent': target_ua
     }

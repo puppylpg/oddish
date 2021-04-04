@@ -65,6 +65,7 @@ class browserc(QtWidgets.QWidget):
     def get_cookie(self, url, demand, textbox):
         url = QtCore.QUrl(url)
         self.browser.load(url)
+        self.browser.page().profile().cookieStore().deleteAllCookies()
         def check_cookie(cookie):
             if cookie.domain() != url.host():
                 return 
@@ -95,7 +96,7 @@ class oddish(Ui_MainWindow):
         self.priceMin.setValue(config.CRAWL_MIN_PRICE_ITEM)
         self.priceMax.setValue(config.CRAWL_MAX_PRICE_ITEM)
 
-        gui_out.text_signal.connect(self.log_output)
+        out.text_signal.connect(self.log_output)
         Dialog.closeEvent = self.on_quit
         self.proxyVaild.setIcon(QtGui.QIcon(":icon/attention.png"))
         self.getSteam.clicked.connect(self.get_steam)
@@ -136,9 +137,11 @@ class oddish(Ui_MainWindow):
     def get_steam(self):
         self.steam_cookie = { 'sessionid': "" , 'steamLoginSecure': ""}
         self.browser.get_cookie('https://steamcommunity.com', self.steam_cookie, self.steamCookie)
+        config.STEAM_COOKIE = self.steam_cookie
     def get_buff(self):
         self.buff_cookie = { 'session': "" }
         self.browser.get_cookie('https://buff.163.com', self.buff_cookie, self.buffCookie)
+        config.BUFF_COOKIE = self.buff_cookie
     def select(self):
         self.selector = selector()
         self.selector.show()

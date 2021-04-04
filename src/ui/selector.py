@@ -37,10 +37,10 @@ class selector(QtWidgets.QWidget):
     def __init__(self, parent = None):
         super(selector, self).__init__(parent)
         self.setWindowTitle("类型限定")
-        gui_out.enabled = False
+        out.enabled = False
         categories = csgo_all_categories()
         self.cur_category = final_categories(categories)
-        gui_out.enabled = True
+        out.enabled = True
         config.CATEGORY_WHITE_LIST = self.cur_category  # when open this, black list is abandoned
 
         grid_layout = QtWidgets.QGridLayout()
