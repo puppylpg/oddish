@@ -90,8 +90,9 @@ steam_cookie = timezoneOffset=28800,0; steamMachineAuth76561198093333055=649A9B5
 你也可以使用网易UU加速器，只需使用模式一、二或三加速Steam社区/商店，并将配置文件中的`proxy`留空。
 
 # 启动命令
-1. （可选）自定义配置，cookie一定要配置，方法见上述“认证”部分；
-1. 工程根目录下运行：`python -m src` 或下载release版本直接运行。
+完成配置后， 工程根目录下运行：`python -m src` 或下载release版本直接运行。
+
+如果需要使用旧式命令行窗口，可以传入`--console`或者在配置中设置`console=True`
 
 ## 输出结果
 - log: 日志；
