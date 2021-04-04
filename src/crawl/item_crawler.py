@@ -98,7 +98,7 @@ async def crawl_goods_by_price_section(category=None):
         if 'error' in root_json:
             log.error('Error field: ' + root_json['error'])
         log.error('Please paste correct buff cookie to config, current cookie：' + str(config.BUFF_COOKIE))
-        return []
+        return None
 
     if ('total_page' not in root_json['data']) or ('total_count' not in root_json['data']):
         log.error("No specific page and count info for root page. Please check buff data structure.")
@@ -164,10 +164,14 @@ def crawl():
     if len(raw_categories) != len(categories):
         total_category = len(categories)
         for index, category in enumerate(categories, start=1):
-            csgo_items.extend(asyncio.run(crawl_goods_by_price_section(category)))
+            t = asyncio.run(crawl_goods_by_price_section(category))
+            if t is None:
+                break
+            else:
+                csgo_items.extend(t)
             log.info('GET category {}/{} for ({}).'.format(index, total_category, category))
     else:
         # crawl by price section without category
-        csgo_items.extend(asyncio.run(crawl_goods_by_price_section(None)))
+        csgo_items.extend(asyncio.run(crawl_goods_by_price_section(None)) or [])
 
     return csgo_items
