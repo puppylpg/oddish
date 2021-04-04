@@ -1,6 +1,4 @@
-import numpy as np
-
-from src.config.definitions import TIMESTAMP, STEAM_SELL_TAX
+from src.config.definitions import config
 
 
 class Item:
@@ -17,7 +15,7 @@ class Item:
         # be overridden later with real history price
         self.gap = self.steam_predict_price - self.price
         self.gap_percent = self.gap * 1.0 / self.price
-        self.crawl_time = TIMESTAMP
+        self.crawl_time = config.TIMESTAMP
 
         # set history price later
         self.history_prices = []
@@ -25,13 +23,14 @@ class Item:
         self.history_days = 0
         self.average_sold_price = 0
         self.average_sold_price_after_tax = 0
+        self.discount_percent = 1
 
     def set_history_prices(self, prices, days):
         self.history_prices = prices
         self.history_sold = len(prices)
         self.history_days = days
         self.average_sold_price = self.centered_average(prices)
-        self.average_sold_price_after_tax = self.average_sold_price * (1 - STEAM_SELL_TAX)
+        self.average_sold_price_after_tax = self.average_sold_price * (1 - config.STEAM_SELL_TAX)
         self.gap = self.average_sold_price_after_tax - self.price
         self.gap_percent = self.gap * 1.0 / self.price
         self.discount_percent = self.price / self.average_sold_price_after_tax
@@ -75,4 +74,6 @@ class Item:
 
     @staticmethod
     def centered_average(numbers):
-        return np.percentile(numbers, 25) if len(numbers) != 0 else 0
+        numbert = numbers
+        numbert.sort()
+        return numbert[int(len(numbert) / 4)]

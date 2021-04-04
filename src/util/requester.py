@@ -1,75 +1,53 @@
+import csv
 import json
 import traceback
 import requests
-import pandas as pd
 import random
 from requests import Timeout
 from aiohttp import ClientSession
 
-from src.config.definitions import PROXY, BUFF_COOKIE, USER_AGENT, STEAM_COOKIE, RETRY_TIMES
+from src.config.definitions import config
 from src.util import timer
 from src.util.logger import log
 from src.util.cache import fetch, store, exist, asyncexist, asyncfetch, asyncstore
 
-buff_cookie_str = BUFF_COOKIE
-buff_cookies = {}
-for line in buff_cookie_str.split(';'):
-    if len(line) == 0:
-        break
-    k, v = line.split('=', 1)
-    buff_cookies[k] = v
-
-steam_cookie_str = STEAM_COOKIE
-steam_cookies = {}
-for line in steam_cookie_str.split(';'):
-    if len(line) == 0:
-        break
-    k, v = line.split('=', 1)
-    k = k.lstrip()
-    steam_cookies[k] = v
-
 # get user-agent database
-csv = pd.read_csv('config/reference/ua.csv')
-ua = csv.ua
-
+f = open('config/reference/ua.csv')
+csv = csv.DictReader(f)
+ua = []
+for k in csv:
+    ua.append(k['ua'])
+f.close()
 
 # get user-agent
+def get_random_ua():
+    return ua[random.randint(0, len(ua))]
+
 def get_ua():
-    if USER_AGENT:
-        return USER_AGENT
+    if config.USER_AGENT:
+        return config.USER_AGENT
     else:
         return get_random_ua()
 
-
-def get_random_ua():
-    return ua[random.randint(0, ua.size)]
-
-
 def get_headers():
     target_ua = get_ua()
-    log.info('use User-Agent: {}'.format(target_ua))
+    # log.info('use User-Agent: {}'.format(target_ua))
     return {
         'User-Agent': target_ua
     }
 
+def get_json_dict_raw(url, cookies = {}, proxy = False, times = 1, is_steam_request = 0):
+    headers = get_headers()
 
-headers = get_headers()
-
-proxies = {}
-if PROXY:
-    proxies["http"] = PROXY
-    proxies["https"] = PROXY
-
-def get_json_dict_raw(url, cookies, proxy = False, times = 1, is_steam_request = 0):
-    if times > RETRY_TIMES:
-        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
+    if times > config.RETRY_TIMES:
+        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, config.RETRY_TIMES))
         return None
 
-    timer.sleep_awhile(is_steam_request)
     try:
-        if proxy and proxies != {}:
-            return requests.get(url, headers=headers, cookies=cookies, timeout=5, proxies=proxies).text
-        return requests.get(url, headers=headers, cookies=cookies, timeout=5).text
+        if proxy and config.PROXY != {}:
+            return requests.get(url, headers = headers, cookies = cookies, timeout = 5, 
+                proxies = { "http": config.PROXY, "https": config.PROXY }).text
+        return requests.get(url, headers = headers, cookies = cookies, timeout = 5).text
     except Timeout:
         log.warn("Timeout for {}. Try again.".format(url))
     except Exception as e:
@@ -79,7 +57,7 @@ def get_json_dict_raw(url, cookies, proxy = False, times = 1, is_steam_request =
     data = get_json_dict_raw(url, cookies, proxy, times + 1)
     return data
 
-def get_json_dict(url, cookies, proxy = False, times = 1, is_steam_request = 0):
+def get_json_dict(url, cookies = {}, proxy = False, times = 1, is_steam_request = 0):
     if exist(url):
         return json.loads(fetch(url))
     json_data = get_json_dict_raw(url, cookies, proxy, times, is_steam_request)
@@ -92,10 +70,9 @@ def get_json_dict(url, cookies, proxy = False, times = 1, is_steam_request = 0):
         return json.loads(json_data)
 
 async def async_get_json_dict_raw(url, cookies, session: ClientSession, proxy = False, times = 1):
-    if times > RETRY_TIMES:
-        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, RETRY_TIMES))
+    if times > config.RETRY_TIMES:
+        log.error('Timeout for {} beyond the maximum({}) retry times. SKIP!'.format(url, config.RETRY_TIMES))
         return None
-
 
     try:
         async with session.get(url) as resp:

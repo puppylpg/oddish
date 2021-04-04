@@ -1,0 +1,53 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>attention.png</file>
+    <file>no.png</file>
+    <file>yes.png</file>
+  </qresource>
+  <qresource prefix="csgo">
+    <file>weapon_ak47.svg</file>
+    <file>weapon_aug.svg</file>
+    <file>weapon_awp.svg</file>
+    <file>weapon_bayonet.svg</file>
+    <file>weapon_bizon.svg</file>
+    <file>weapon_cz75a.svg</file>
+    <file>weapon_deagle.svg</file>
+    <file>weapon_elite.svg</file>
+    <file>weapon_famas.svg</file>
+    <file>weapon_fiveseven.svg</file>
+    <file>weapon_g3sg1.svg</file>
+    <file>weapon_galilar.svg</file>
+    <file>weapon_glock.svg</file>
+    <file>weapon_hkp2000.svg</file>
+    <file>weapon_knife.svg</file>
+    <file>weapon_knife_butterfly.svg</file>
+    <file>weapon_knife_falchion.svg</file>
+    <file>weapon_knife_flip.svg</file>
+    <file>weapon_knife_gut.svg</file>
+    <file>weapon_knife_karambit.svg</file>
+    <file>weapon_knife_m9_bayonet.svg</file>
+    <file>weapon_knife_push.svg</file>
+    <file>weapon_knife_t.svg</file>
+    <file>weapon_knife_tactical.svg</file>
+    <file>weapon_m4a1.svg</file>
+    <file>weapon_m4a1_silencer.svg</file>
+    <file>weapon_m249.svg</file>
+    <file>weapon_mac10.svg</file>
+    <file>weapon_mag7.svg</file>
+    <file>weapon_mp7.svg</file>
+    <file>weapon_mp9.svg</file>
+    <file>weapon_negev.svg</file>
+    <file>weapon_nova.svg</file>
+    <file>weapon_p90.svg</file>
+    <file>weapon_p250.svg</file>
+    <file>weapon_revolver.svg</file>
+    <file>weapon_sawedoff.svg</file>
+    <file>weapon_scar20.svg</file>
+    <file>weapon_sg556.svg</file>
+    <file>weapon_ssg08.svg</file>
+    <file>weapon_tec9.svg</file>
+    <file>weapon_ump45.svg</file>
+    <file>weapon_usp_silencer.svg</file>
+    <file>weapon_xm1014.svg</file>
+  </qresource>
+</RCC>
