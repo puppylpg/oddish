@@ -67,6 +67,6 @@
 - csgo_tool_gifttag：礼物
 - csgo_type_musickit：音乐盒
 - csgo_type_weaponcase：武器箱
-- csgo_tool_weaponcase_keytag：要是
+- csgo_tool_weaponcase_keytag：钥匙
 - type_customplayer：探员
 - csgo_tool_patch：布章
