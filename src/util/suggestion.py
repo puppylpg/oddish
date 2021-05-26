@@ -24,9 +24,9 @@ def sort_by_column(table, suggestion, column, ascending=True):
     filtered_table = filter_table(table)
 
     if ascending:
-        top = heapq.nsmallest(config.TOP_N, table, key = lambda s: getattr(s, column))
+        top = heapq.nsmallest(config.TOP_N, filtered_table, key = lambda s: getattr(s, column))
     else:
-        top = heapq.nlargest(config.TOP_N, table, key = lambda s: getattr(s, column))
+        top = heapq.nlargest(config.TOP_N, filtered_table, key = lambda s: getattr(s, column))
 
     suggestion_log.info(suggestion + '降序：')
     for item in top:
