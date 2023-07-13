@@ -18,7 +18,7 @@ PyQtWebEngine==5.15.2
 PySocks==1.7.1
 python-socks==1.2.0
 pywin32-ctypes==0.2.0
-requests==2.25.1
+requests==2.31.0
 typing-extensions==3.7.4.3
 urllib3==1.26.5
 yarl==1.6.3
