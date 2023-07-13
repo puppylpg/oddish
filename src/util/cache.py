@@ -21,7 +21,12 @@ def vaild_json(js):
     return True
 
 def url_id(url):
-    return hashlib.sha1(url.encode("utf-8")).hexdigest()
+    tag = ''
+    if (url.find('steamcommunity')) != -1:
+        tag = 'STEAM'
+    else:
+        tag = 'BUFF'
+    return tag + hashlib.sha1(url.encode("utf-8")).hexdigest()
 
 def exist(url):
     if config.FORCE_CRAWL:
