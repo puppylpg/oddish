@@ -145,8 +145,6 @@ async def crawl_goods_by_price_section(category=None):
                 except Exception as e:
                     log.error(traceback.format_exc())
                 tasks = []
-                if not exist(page_url):
-                    await timer.async_sleep_awhile(0, time.time() - stamp)
             else:
                 log.warn("No specific data for page {}. Skip this page.".format(page_url))
     return category_items
