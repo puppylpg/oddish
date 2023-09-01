@@ -121,7 +121,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="priceMin">
+            <widget class="QDoubleSpinBox" name="priceMin">
              <property name="suffix">
               <string>¥</string>
              </property>
@@ -141,7 +141,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="priceMax">
+            <widget class="QDoubleSpinBox" name="priceMax">
              <property name="suffix">
               <string>¥</string>
              </property>
