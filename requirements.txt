@@ -20,5 +20,5 @@ python-socks==1.2.0
 pywin32-ctypes==0.2.0
 requests==2.31.0
 typing-extensions==3.7.4.3
-urllib3==1.26.5
+urllib3==1.26.18
 yarl==1.6.3
